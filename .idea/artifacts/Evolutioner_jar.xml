@@ -1,0 +1,8 @@
+<component name="ArtifactManager">
+  <artifact type="jar" build-on-make="true" name="Evolutioner:jar">
+    <output-path>$USER_HOME$/Bureau/Dev/</output-path>
+    <root id="archive" name="Evolutioner.jar">
+      <element id="module-output" name="Evolutioner" />
+    </root>
+  </artifact>
+</component>
