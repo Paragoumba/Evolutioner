@@ -1,8 +1,8 @@
-package fr.paragoumba.evolutioner.creatures;
+package fr.paragoumba.evolutioner.entities;
 
 import java.awt.*;
 
-public class Creature implements Runnable {
+public class Creature extends Entity implements Runnable {
 
     public Creature(int nodeNumber){
 
@@ -44,17 +44,18 @@ public class Creature implements Runnable {
         }
     }
 
+    @Override
     public void draw(Graphics graphics){
-
-        for (Node node : nodes){
-
-            node.draw(graphics);
-
-        }
 
         for (Muscle muscle : muscles){
 
             muscle.draw(graphics);
+
+        }
+
+        for (Node node : nodes){
+
+            node.draw(graphics);
 
         }
     }

@@ -1,6 +1,7 @@
-package fr.paragoumba.evolutioner.creatures;
+package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Evolutioner;
+import fr.paragoumba.evolutioner.Farm;
 
 import java.awt.*;
 import java.util.Random;
@@ -10,9 +11,18 @@ class Node {
     Node() {
 
         Random random = new Random();
-        
-        this.relativeX = random.nextInt(Evolutioner.WIDTH - 200 + 1) + 100;
-        this.relativeY = random.nextInt(Evolutioner.HEIGHT - 112 + 1) + 56;
+
+        int bound = Evolutioner.frame.getWidth() + 1;
+
+        if (bound < 0) bound = 1;
+
+        this.relativeX = random.nextInt(bound);
+
+        bound = Evolutioner.frame.getHeight() - 60 + 1;
+
+        if (bound < 0) bound = 1;
+
+        this.relativeY = random.nextInt(bound);
         this.friction = random.nextDouble();
 
         initColor();
@@ -51,7 +61,7 @@ class Node {
     public void draw(Graphics graphics){
 
         graphics.setColor(color);
-        graphics.fillArc(relativeX - radius, relativeY - radius, radius * 2, radius * 2, 0, 360);
+        graphics.fillArc(relativeX * Evolutioner.frame.getWidth() / Farm.baseWidth - radius, relativeY * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight - radius, radius * 2, radius * 2, 0, 360);
 
     }
 

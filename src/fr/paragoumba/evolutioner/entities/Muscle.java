@@ -1,6 +1,7 @@
-package fr.paragoumba.evolutioner.creatures;
+package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Evolutioner;
+import fr.paragoumba.evolutioner.Farm;
 
 import java.awt.*;
 import java.util.Random;
@@ -15,8 +16,17 @@ class Muscle {
         this.relativeX1 = relativeX1;
         this.relativeY1 = relativeY1;
 
-        this.relativeX2 = random.nextInt(Evolutioner.WIDTH - 200 + 1) + 100;
-        this.relativeY2 = random.nextInt(Evolutioner.HEIGHT - 112 + 1) + 56;
+        int bound = Evolutioner.frame.getWidth() + 1;
+
+        if (bound < 0) bound = 1;
+
+        this.relativeX2 = random.nextInt(bound);
+
+        bound = Evolutioner.frame.getHeight() - 60 + 1;
+
+        if (bound < 0) bound = 1;
+
+        this.relativeY2 = random.nextInt(bound);
         this.extendedLength = random.nextDouble() * 50;
         this.contractedLength = random.nextDouble() * extendedLength;
         this.extendedTime = ratio;
@@ -95,9 +105,9 @@ class Muscle {
         //Simple Line
         graphics.setColor(color);
 
-        graphics.drawLine(relativeX1, relativeY1 - 1, relativeX2, relativeY2 - 1);
-        graphics.drawLine(relativeX1, relativeY1, relativeX2, relativeY2);
-        graphics.drawLine(relativeX1, relativeY1 + 1, relativeX2, relativeY2 + 1);
+        graphics.drawLine(relativeX1 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY1 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight - 1, relativeX2 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY2 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight - 1);
+        graphics.drawLine(relativeX1 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY1 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight, relativeX2 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY2 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight);
+        graphics.drawLine(relativeX1 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY1 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight + 1, relativeX2 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY2 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight + 1);
     }
 
     private void initColor(){

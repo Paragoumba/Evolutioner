@@ -8,15 +8,17 @@ import java.text.DecimalFormat;
 
 public class Display extends JPanel implements Runnable, KeyListener {
 
-    private static int fps = 60;
+    public static Color BACKGROUND_COLOR = Color.CYAN;
+
+    public static int fps = 60;
     private static String actualFPS = "";
-    private static double actualLoopTime = 0;
+    //private static double actualLoopTime = 0;
     private static boolean running = true;
 
     @Override
     public void run() {
 
-        DecimalFormat decimalFormat = new DecimalFormat("##.##");
+        DecimalFormat decimalFormat = new DecimalFormat(fps > 99 ? "###.##" : "##.##");
         double targetTime = (1e3 / fps);
 
         while (running) {
@@ -26,6 +28,8 @@ public class Display extends JPanel implements Runnable, KeyListener {
             //Run code
             requestFocus();
             repaint();
+
+            if (Evolutioner.debug) Evolutioner.frame.setTitle(Evolutioner.title + " - " + actualFPS + "FPS");
             //
 
             long elapsed = System.currentTimeMillis() - start;
@@ -58,23 +62,22 @@ public class Display extends JPanel implements Runnable, KeyListener {
     @Override
     public void paintComponent(Graphics graphics) {
 
-        graphics.setColor(new Color(100, 255, 100));
-        graphics.fillRect(0, 0, Evolutioner.WIDTH, Evolutioner.HEIGHT);
+        System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
 
-        graphics.setColor(Color.YELLOW);
-        graphics.drawRect(100, 56, Evolutioner.WIDTH - 200, Evolutioner.HEIGHT - 56*2);
+        super.paintComponent(graphics);
 
-        if (Evolutioner.debug) Evolutioner.frame.setTitle(Evolutioner.title + " - " + actualFPS + "FPS");
+        graphics.setColor(BACKGROUND_COLOR);
+        graphics.fillRect(0, 0, Evolutioner.frame.getWidth(), Evolutioner.frame.getHeight() - 60);
+
+        graphics.setColor(Color.GREEN);
+        graphics.fillRect(0, Evolutioner.frame.getHeight() - 10 - 50, Evolutioner.frame.getWidth(), 10);
+
+        graphics.setColor(new Color(124, 44, 4));
+        graphics.fillRect(0, Evolutioner.frame.getHeight() - 50, Evolutioner.frame.getWidth(), 50);
 
         Farm.drawCreatures(graphics);
 
-        if (Evolutioner.debug) {
-
-            graphics.setColor(Color.BLUE);
-            graphics.drawString(String.valueOf(Evolutioner.frame.getInsets().top) + ":" + String.valueOf(Evolutioner.frame.getInsets().right) + ":" + String.valueOf(Evolutioner.frame.getInsets().bottom) + ":" + String.valueOf(Evolutioner.frame.getInsets().left), Evolutioner.WIDTH / 2, Evolutioner.HEIGHT - 50);
-
-        }
-
+        Evolutioner.frame.pack();
     }
 
     @Override
@@ -83,8 +86,6 @@ public class Display extends JPanel implements Runnable, KeyListener {
         System.out.println("Input !");
 
         if (e.getKeyChar() == 'g'){
-
-            System.out.println('g');
 
             Farm.generateCreatures();
 

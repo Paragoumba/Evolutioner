@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.creatures.Creature;
+import fr.paragoumba.evolutioner.entities.Creature;
 
 import java.awt.*;
 
@@ -8,6 +8,8 @@ public class Farm implements Runnable {
 
     private Farm(){}
 
+    public static int baseWidth;
+    public static int baseHeight;
     private static Creature[] creatures;
     private static long runTime = 15000;
 
@@ -24,6 +26,9 @@ public class Farm implements Runnable {
     }
 
     public static void generateCreatures(){
+
+        baseWidth = Evolutioner.frame.getWidth();
+        baseHeight = Evolutioner.frame.getHeight();
 
         for (int i = 0; i < creatures.length; ++i){
 
