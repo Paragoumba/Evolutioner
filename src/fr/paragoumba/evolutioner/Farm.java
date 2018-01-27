@@ -12,6 +12,7 @@ public class Farm implements Runnable {
     public static int baseHeight;
     private static Creature[] creatures;
     private static long runTime = 15000;
+    private static Thread livingThread;
 
     public static void setCreatures(int creatures){
 
@@ -35,6 +36,10 @@ public class Farm implements Runnable {
             creatures[i] = new Creature(3);
 
         }
+
+        livingThread = new Thread(creatures[0], "Thread - Living");
+        livingThread.start();
+
     }
 
     public static void drawCreatures(Graphics graphics){
@@ -42,6 +47,15 @@ public class Farm implements Runnable {
         for (Creature creature : creatures){
 
             creature.draw(graphics);
+
+        }
+    }
+
+    public static void killCreatures(){
+
+        for (Creature creature : creatures){
+
+            creature.die();
 
         }
     }

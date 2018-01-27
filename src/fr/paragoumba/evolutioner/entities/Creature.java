@@ -1,5 +1,7 @@
 package fr.paragoumba.evolutioner.entities;
 
+import fr.paragoumba.evolutioner.Evolutioner;
+
 import java.awt.*;
 
 public class Creature extends Entity implements Runnable {
@@ -25,12 +27,33 @@ public class Creature extends Entity implements Runnable {
     public void run() {
 
         boolean extending = true;
-        long targetTime = 1;
+        long targetTime = 3;
+        int velocity = 1;
 
         while (living) {
 
             //Run code
-            //...
+            Node maxNode = new Node(Evolutioner.frame.getWidth() / 2, 0);
+
+            for (Node node : nodes){
+
+                if (velocity > 0 && node.relativeX > maxNode.relativeX) maxNode = node;
+                else if (velocity < 0 && node.relativeX < maxNode.relativeX) maxNode = node;
+
+            }
+
+            if (maxNode.relativeX >= Evolutioner.frame.getWidth()) velocity *= -1;
+
+            System.out.println(velocity);
+
+            for (Node node : nodes) node.relativeX += velocity;
+            for (Muscle muscle : muscles) {
+
+                muscle.relativeX1 += velocity;
+                muscle.relativeX2 += velocity;
+
+            }
+
 
             try {
 

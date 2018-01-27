@@ -2,9 +2,7 @@ package fr.paragoumba.evolutioner;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowStateListener;
 
 import static fr.paragoumba.evolutioner.Display.fps;
 
@@ -15,10 +13,10 @@ public class Evolutioner {
     public static final String version = "0.3b1";
     public static final String title = "Evolutioner v" + version;
 
-    private static Thread displayThread = new Thread(new Display(), "Thread-Display");
-    public static JFrame frame = new JFrame("Evolutioner");
+    public static JFrame frame = new JFrame(title);
     private static JFrame configFrame = new JFrame("Evolutioner - Config");
     private static Display display = new Display();
+    private static Thread displayThread = new Thread(display, "Thread-Display");
 
     public static void main(String[] args) {
 
@@ -40,6 +38,7 @@ public class Evolutioner {
         frame.setContentPane(display);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setPreferredSize(dimension);
+        frame.setSize(dimension);
         frame.addKeyListener(new InputHandler());
         frame.setFocusable(true);
         frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
@@ -49,7 +48,7 @@ public class Evolutioner {
         frame.pack();
         frame.setVisible(true);
 
-        Farm.setCreatures(3);
+        Farm.setCreatures(100);
         Farm.generateCreatures();
 
         displayThread.start();

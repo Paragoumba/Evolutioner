@@ -73,8 +73,8 @@ class Muscle {
 
     }
 
-    private int relativeX1;
-    private int relativeY1;
+    int relativeX1;
+    int relativeY1;
     int relativeX2;
     int relativeY2;
     private double extendedLength;

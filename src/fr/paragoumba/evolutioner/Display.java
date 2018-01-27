@@ -9,6 +9,8 @@ import java.text.DecimalFormat;
 public class Display extends JPanel implements Runnable, KeyListener {
 
     public static Color BACKGROUND_COLOR = Color.CYAN;
+    private static Color DIRT_COLOR = new Color(124, 44, 4);
+    private static Color GRASS_COLOR = Color.GREEN;
 
     public static int fps = 60;
     private static String actualFPS = "";
@@ -26,14 +28,14 @@ public class Display extends JPanel implements Runnable, KeyListener {
             long start = System.currentTimeMillis();
 
             //Run code
-            requestFocus();
+            //requestFocus();
             repaint();
+            //Evolutioner.frame.pack();
 
             if (Evolutioner.debug) Evolutioner.frame.setTitle(Evolutioner.title + " - " + actualFPS + "FPS");
             //
 
             long elapsed = System.currentTimeMillis() - start;
-
             long wait = Math.round(targetTime - elapsed);
 
             if (wait < 0) wait = (long) targetTime;
@@ -48,6 +50,8 @@ public class Display extends JPanel implements Runnable, KeyListener {
 
             }
 
+
+
             actualFPS =  decimalFormat.format(1d / (System.currentTimeMillis() - start) * 1E3);
             //actualLoopTime = wait;
         }
@@ -56,23 +60,24 @@ public class Display extends JPanel implements Runnable, KeyListener {
     public static void stop(){
 
         running = false;
+        Farm.killCreatures();
 
     }
 
     @Override
     public void paintComponent(Graphics graphics) {
 
-        System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
+        //System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
 
         super.paintComponent(graphics);
 
         graphics.setColor(BACKGROUND_COLOR);
         graphics.fillRect(0, 0, Evolutioner.frame.getWidth(), Evolutioner.frame.getHeight() - 60);
 
-        graphics.setColor(Color.GREEN);
+        graphics.setColor(GRASS_COLOR);
         graphics.fillRect(0, Evolutioner.frame.getHeight() - 10 - 50, Evolutioner.frame.getWidth(), 10);
 
-        graphics.setColor(new Color(124, 44, 4));
+        graphics.setColor(DIRT_COLOR);
         graphics.fillRect(0, Evolutioner.frame.getHeight() - 50, Evolutioner.frame.getWidth(), 50);
 
         Farm.drawCreatures(graphics);
