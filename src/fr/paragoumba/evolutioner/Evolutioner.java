@@ -10,7 +10,7 @@ public class Evolutioner {
 
     public static boolean debug;
     public static final int BASE_TIME = 1;
-    public static final String version = "0.3b1";
+    public static final String version = "0.4b1";
     public static final String title = "Evolutioner v" + version;
 
     public static JFrame frame = new JFrame(title);
@@ -45,11 +45,12 @@ public class Evolutioner {
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setTitle(title);
         frame.setLocationRelativeTo(null);
+
+        Farm.setCreatures(10000);
+        Farm.generateCreatures();
+
         frame.pack();
         frame.setVisible(true);
-
-        Farm.setCreatures(100);
-        Farm.generateCreatures();
 
         displayThread.start();
 

@@ -8,7 +8,7 @@ public class InputHandler implements KeyListener {
     @Override
     public void keyTyped(KeyEvent e) {
 
-        System.out.println("Input !");
+        if (Evolutioner.debug) System.out.println("Input !");
 
         if (e.isAltDown() && e.getKeyChar() == 'k'){
 

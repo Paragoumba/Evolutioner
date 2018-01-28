@@ -54,7 +54,6 @@ public class Creature extends Entity implements Runnable {
 
             }
 
-
             try {
 
                 Thread.sleep(targetTime);

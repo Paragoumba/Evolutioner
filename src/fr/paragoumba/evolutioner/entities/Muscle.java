@@ -1,5 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
+import fr.paragoumba.evolutioner.Display;
 import fr.paragoumba.evolutioner.Evolutioner;
 import fr.paragoumba.evolutioner.Farm;
 
@@ -16,13 +17,13 @@ class Muscle {
         this.relativeX1 = relativeX1;
         this.relativeY1 = relativeY1;
 
-        int bound = Evolutioner.frame.getWidth() + 1;
+        int bound = Display.worldWidth + 1;
 
         if (bound < 0) bound = 1;
 
         this.relativeX2 = random.nextInt(bound);
 
-        bound = Evolutioner.frame.getHeight() - 60 + 1;
+        bound = Display.worldHeight + 1;
 
         if (bound < 0) bound = 1;
 
@@ -86,7 +87,7 @@ class Muscle {
 
     public void draw(Graphics graphics){
 
-        /*int slope = (relativeY2 - relativeY1) / (relativeX2 - relativeY1);
+        /*int slope = (relativeY2 - relativeY1) / (relativeX2 - relativeX1);
         int y0 = relativeY1 - relativeX1 * slope;
 
         int ;
@@ -105,9 +106,9 @@ class Muscle {
         //Simple Line
         graphics.setColor(color);
 
-        graphics.drawLine(relativeX1 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY1 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight - 1, relativeX2 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY2 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight - 1);
-        graphics.drawLine(relativeX1 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY1 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight, relativeX2 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY2 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight);
-        graphics.drawLine(relativeX1 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY1 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight + 1, relativeX2 * Evolutioner.frame.getWidth() / Farm.baseWidth, relativeY2 * (Evolutioner.frame.getHeight() - 60) / Farm.baseHeight + 1);
+        graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight - 1, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight - 1);
+        graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight);
+        graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight + 1, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight + 1);
     }
 
     private void initColor(){
