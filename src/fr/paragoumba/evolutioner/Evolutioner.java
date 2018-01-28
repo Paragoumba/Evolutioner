@@ -1,5 +1,7 @@
 package fr.paragoumba.evolutioner;
 
+import fr.paragoumba.evolutioner.entities.Sign;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.WindowEvent;
@@ -46,8 +48,16 @@ public class Evolutioner {
         frame.setTitle(title);
         frame.setLocationRelativeTo(null);
 
-        Farm.setCreatures(10000);
+        Farm.setCreatures(1);
         Farm.generateCreatures();
+        EntityManager.addEntity(new Sign(0));
+        EntityManager.addEntity(new Sign(250));
+        EntityManager.addEntity(new Sign(500));
+        EntityManager.addEntity(new Sign(750));
+        EntityManager.addEntity(new Sign(1000));
+        EntityManager.addEntity(new Sign(1250));
+        EntityManager.addEntity(new Sign(1500));
+        EntityManager.addEntity(new Sign(1750));
 
         frame.pack();
         frame.setVisible(true);

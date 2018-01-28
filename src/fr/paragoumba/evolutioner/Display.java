@@ -98,6 +98,7 @@ public class Display extends JPanel implements Runnable, KeyListener {
         graphics.fillRect(0, worldHeight, grassWidth, grassHeight);
 
         Farm.drawCreatures(graphics);
+        EntityManager.drawEntities(graphics);
 
         //Evolutioner.frame.pack();
     }
