@@ -53,7 +53,7 @@ class Node {
         
     }
 
-    private final int radius = 5;
+    private final int radius = 7;
     int relativeX;
     int relativeY;
     private final double friction;

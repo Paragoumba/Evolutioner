@@ -79,17 +79,30 @@ public class Display extends JPanel implements Runnable, KeyListener {
     @Override
     public void paintComponent(Graphics graphics) {
 
-        Insets insets = Evolutioner.frame.getInsets();
-
-        worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
-        worldHeight = Evolutioner.frame.getHeight() - insets.top - insets.bottom - 60;
-        dirtWidth = grassWidth = worldWidth;
+        setWorldSize();
 
         //if (Evolutioner.debug) System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
 
         graphics.setColor(BACKGROUND_COLOR);
         graphics.fillRect(0, 0, worldWidth, worldHeight);
 
+        /* #Teleboubizes */
+        graphics.setColor(Color.YELLOW);
+        graphics.fillOval(75, 75, 100, 100);
+
+        graphics.setColor(Color.BLACK);
+        graphics.drawArc(75 + 20, 75 + 20, 60, 60, -20, -140);
+        graphics.drawArc(75 + 20, 75 + 20 + 1, 60, 60, -20, -140);
+        graphics.drawArc(75 + 20, 75 + 20 + 2, 60, 60, -20, -140);
+
+        int eyesYDistance = 30;
+        int nodesYDistance = Display.worldHeight;
+        int averageYNode = Farm.get1stCreature().getAverageY();
+        int yEyes = (75 + 60 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
+
+        graphics.fillOval(75  + 60 - 10, yEyes, 5, 5);
+        graphics.fillOval(75 + 60 + 10, yEyes, 5, 5);
+        /* Ca nous a fait trop golri */
 
         graphics.setColor(DIRT_COLOR);
         graphics.fillRect(0, worldHeight + 10, dirtWidth, dirtHeight);
@@ -100,7 +113,33 @@ public class Display extends JPanel implements Runnable, KeyListener {
         Farm.drawCreatures(graphics);
         EntityManager.drawEntities(graphics);
 
-        //Evolutioner.frame.pack();
+        if (Evolutioner.debug){
+
+            //Displays location of mouse around it
+            Point point = MouseInfo.getPointerInfo().getLocation();
+            String x = point.x + "x";
+            String y = point.y + "y";
+
+            graphics.setColor(Color.GRAY);
+            graphics.drawString(x, point.x, point.y - 35);
+            graphics.drawString(y, point.x - y.length() * 10, point.y - 20);
+
+        }
+
+        graphics.setColor(Color.RED);
+        graphics.drawRect(0, 0, worldWidth, worldHeight);
+    }
+
+    public static void setWorldSize(){
+
+        Insets insets = Evolutioner.frame.getInsets();
+
+        worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
+        worldHeight = Evolutioner.frame.getHeight() - dirtHeight - grassHeight - insets.top - insets.bottom;
+        dirtWidth = grassWidth = worldWidth;
+
+        System.out.println(Evolutioner.frame.getHeight() + " - " + dirtHeight + " - " + grassHeight + " - " + insets.top + " - " + insets.bottom + " = " + worldHeight);
+
     }
 
     @Override

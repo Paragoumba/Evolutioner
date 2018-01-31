@@ -10,13 +10,13 @@ import static fr.paragoumba.evolutioner.Display.fps;
 
 public class Evolutioner {
 
-    public static boolean debug;
+    public static boolean debug = false;
     public static final int BASE_TIME = 1;
-    public static final String version = "0.4b1";
-    public static final String title = "Evolutioner v" + version;
+    public static final String version = "0.5b1";
+    public static final String title = "Evolutioner";
 
-    public static JFrame frame = new JFrame(title);
-    private static JFrame configFrame = new JFrame("Evolutioner - Config");
+    public static JFrame frame = new JFrame(title + " - " + version);
+    private static JFrame configFrame = new JFrame(title + " - Config");
     private static Display display = new Display();
     private static Thread displayThread = new Thread(display, "Thread-Display");
 
@@ -30,8 +30,6 @@ public class Evolutioner {
                 break;
 
             }
-
-            debug = false;
         }
 
         //Initializing display's components
@@ -48,6 +46,7 @@ public class Evolutioner {
         frame.setTitle(title);
         frame.setLocationRelativeTo(null);
 
+        Display.setWorldSize();
         Farm.setCreatures(1);
         Farm.generateCreatures();
         EntityManager.addEntity(new Sign(0));
@@ -71,7 +70,7 @@ public class Evolutioner {
         JPanel panel = new JPanel();
 
         configFrame.setContentPane(panel);
-        configFrame.setPreferredSize(new Dimension(500, 500));
+        configFrame.setPreferredSize(new Dimension(300, 50));
         configFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
 
         JTextField fpsTextField = new JTextField();
@@ -82,37 +81,60 @@ public class Evolutioner {
         fpsTextField.setText(Integer.toString(fps));
         widthTextField.setText(Integer.toString(frame.getWidth()));
         heightTextField.setText(Integer.toString(frame.getHeight()));
+
         fpsTextField.setDocument(new PlainDocument());
         widthTextField.setDocument(new PlainDocument());
         heightTextField.setDocument(new PlainDocument());
-        fpsTextField.setSize(100, fpsTextField.getHeight());
+
+        fpsTextField.setPreferredSize(new Dimension(100, fpsTextField.getHeight()));
         widthTextField.setSize(100, widthTextField.getHeight());
         heightTextField.setSize(100, heightTextField.getHeight());
 
         button.addActionListener(e -> {
 
-            if (!fpsTextField.getText().equals("") && !widthTextField.getText().equals("") && !heightTextField.getText().equals("")) {
+            DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode();
+            int width = displayMode.getWidth();
+            int height = displayMode.getHeight();
+
+            if (!fpsTextField.getText().equals("")) {
 
                 int fps = Integer.parseInt(fpsTextField.getText());
-                int width = Integer.parseInt(widthTextField.getText());
-                int height = Integer.parseInt(heightTextField.getText());
-
-                DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode();
                 int refreshRate = displayMode.getRefreshRate();
-                int screenWidth = displayMode.getWidth();
-                int screenHeight = displayMode.getHeight();
 
                 if (!debug) {
 
                     fps = refreshRate != DisplayMode.REFRESH_RATE_UNKNOWN && fps > refreshRate ? refreshRate : fps;
-                    width = width > screenWidth ? screenWidth : width;
-                    height = height > screenHeight ? screenHeight : height;
 
                 }
 
                 Display.fps = fps;
-                frame.setSize(width, height);
             }
+
+            if (!widthTextField.getText().equals("")){
+
+                width = Integer.parseInt(widthTextField.getText());
+                int screenWidth = displayMode.getWidth();
+
+                if (!debug) {
+
+                    width = width > screenWidth ? screenWidth : width;
+
+                }
+            }
+
+            if (!heightTextField.getText().equals("")){
+
+                height = Integer.parseInt(heightTextField.getText());
+                int screenHeight = displayMode.getHeight();
+
+                if (!debug) {
+
+                    height = height > screenHeight ? screenHeight : height;
+
+                }
+            }
+
+            frame.setSize(width, height);
         });
 
         panel.add(/*"fpsTextField", */fpsTextField);

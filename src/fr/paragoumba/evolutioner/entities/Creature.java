@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.Evolutioner;
+import fr.paragoumba.evolutioner.Display;
 
 import java.awt.*;
 
@@ -19,7 +19,7 @@ public class Creature extends Entity implements Runnable {
         }
     }
 
-    private boolean living = false;
+    private boolean living = true;
     private Node[] nodes;
     private Muscle[] muscles;
 
@@ -28,29 +28,85 @@ public class Creature extends Entity implements Runnable {
 
         boolean extending = true;
         long targetTime = 3;
-        int velocity = 1;
+        int velocityX = 1;
+        int velocityY = 1;
 
         while (living) {
 
             //Run code
-            Node maxNode = new Node(Evolutioner.frame.getWidth() / 2, 0);
+            Node maxXNode = new Node(Display.worldWidth / 2, 0);
+            Node minXNode = new Node(Display.worldWidth / 2, 0);
+            Node maxYNode = new Node(Display.worldHeight / 2, 0);
+            Node minYNode = new Node(Display.worldHeight / 2, 0);
 
             for (Node node : nodes){
 
-                if (velocity > 0 && node.relativeX > maxNode.relativeX) maxNode = node;
-                else if (velocity < 0 && node.relativeX < maxNode.relativeX) maxNode = node;
+                if (velocityX > 0) {
 
+                    if (node.relativeX > maxXNode.relativeX){
+
+                        maxXNode = node;
+
+                    } else if (node.relativeX < minXNode.relativeX){
+
+                        minXNode = node;
+
+                    }
+
+                } else if (velocityX < 0){
+
+                    if (node.relativeX < maxXNode.relativeX){
+
+                        maxXNode = node;
+
+                    } else if (node.relativeX > minXNode.relativeX){
+
+                        minXNode = node;
+
+                    }
+                }
+
+                if (velocityY > 0) {
+
+                    if (node.relativeY > maxYNode.relativeY){
+
+                        maxYNode = node;
+
+                    } else if (node.relativeY < minYNode.relativeY){
+
+                        minYNode = node;
+
+                    }
+
+                } else if (velocityY < 0){
+
+                    if (node.relativeY < maxYNode.relativeY){
+
+                        maxYNode = node;
+
+                    } else if (node.relativeY > minYNode.relativeY){
+
+                        minYNode = node;
+
+                    }
+                }
             }
 
-            if (maxNode.relativeX >= Evolutioner.frame.getWidth()) velocity *= -1;
+            if (maxXNode.relativeX >= Display.worldWidth || maxXNode.relativeX <= 0) velocityX *= -1;
+            if (maxYNode.relativeY >= Display.worldHeight || maxYNode.relativeY <= 0) velocityY *= -1;
 
-            System.out.println(velocity);
-
-            for (Node node : nodes) node.relativeX += velocity;
+            for (Node node : nodes) {
+                
+                node.relativeX += velocityX;
+                node.relativeY += velocityY;
+            
+            }
             for (Muscle muscle : muscles) {
 
-                muscle.relativeX1 += velocity;
-                muscle.relativeX2 += velocity;
+                muscle.relativeX1 += velocityX;
+                muscle.relativeX2 += velocityX;
+                muscle.relativeY1 += velocityY;
+                muscle.relativeY2 += velocityY;
 
             }
 
@@ -80,6 +136,22 @@ public class Creature extends Entity implements Runnable {
             node.draw(graphics);
 
         }
+    }
+
+    public int getAverageY(){
+
+        int y = 0;
+        int i = 0;
+
+        for (Node node : nodes){
+
+            y += node.relativeY;
+            ++i;
+
+        }
+
+        return y / i;
+
     }
 
     public void die(){

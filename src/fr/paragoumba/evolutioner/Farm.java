@@ -51,6 +51,12 @@ public class Farm implements Runnable {
         }
     }
 
+    static Creature get1stCreature(){
+
+        return creatures[0];
+
+    }
+
     public static void killCreatures(){
 
         for (Creature creature : creatures){
