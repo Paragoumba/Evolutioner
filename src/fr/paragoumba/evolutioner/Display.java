@@ -5,8 +5,9 @@ import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.text.DecimalFormat;
+import java.util.Random;
 
-public class Display extends JPanel implements Runnable, KeyListener {
+public class Display extends JPanel implements Runnable {
 
     public static int worldWidth;
     public static int worldHeight;
@@ -22,11 +23,11 @@ public class Display extends JPanel implements Runnable, KeyListener {
     public static int fps = 60;
     private static double lastFPSDisplay = 0;
     private static boolean running = true;
+    private static int i = 0;
 
     @Override
     public void run() {
 
-        DecimalFormat decimalFormat = new DecimalFormat(fps > 99 ? "###.##" : "##.##");
         double targetTime = (1e3 / fps);
         int i = 0;
 
@@ -61,7 +62,10 @@ public class Display extends JPanel implements Runnable, KeyListener {
 
                 i = 0;
 
-                if (Evolutioner.debug) Evolutioner.frame.setTitle(Evolutioner.title + " - " + decimalFormat.format(1d/lastFPSDisplay * 1E3 * 60) + "FPS (" + lastFPSDisplay + "ms)");
+                //Correct FPS
+                //lastFPSDisplay -= 20;
+
+                if (Evolutioner.debug) Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS (" + lastFPSDisplay + "ms)");
 
                 lastFPSDisplay = 0;
 
@@ -95,13 +99,30 @@ public class Display extends JPanel implements Runnable, KeyListener {
         graphics.drawArc(75 + 20, 75 + 20 + 1, 60, 60, -20, -140);
         graphics.drawArc(75 + 20, 75 + 20 + 2, 60, 60, -20, -140);
 
-        int eyesYDistance = 30;
+        int eyesYDistance = 30 * worldHeight / 811;
         int nodesYDistance = Display.worldHeight;
         int averageYNode = Farm.get1stCreature().getAverageY();
-        int yEyes = (75 + 60 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
+        int yEyes = (75 + 50 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
 
-        graphics.fillOval(75  + 60 - 10, yEyes, 5, 5);
-        graphics.fillOval(75 + 60 + 10, yEyes, 5, 5);
+        int eyesXDistance = 30 * worldWidth / 1600;
+        int nodesXDistance = Display.worldWidth;
+        int averageXNode = Farm.get1stCreature().getAverageX();
+        int xEyes = (75 + 50 + averageXNode * eyesXDistance / nodesXDistance);
+
+        // Makes the sun blinks his eyes
+        int eyesHeight = 5;
+        if (i >= 620) eyesHeight = 2;
+        if (i >= 640){
+
+            i = 0;
+
+        }
+
+        ++i;
+        //
+
+        graphics.fillOval(xEyes - 10, yEyes, 5, eyesHeight);
+        graphics.fillOval(xEyes + 10, yEyes, 5, eyesHeight);
         /* Ca nous a fait trop golri */
 
         graphics.setColor(DIRT_COLOR);
@@ -115,8 +136,13 @@ public class Display extends JPanel implements Runnable, KeyListener {
 
         if (Evolutioner.debug){
 
-            //Displays location of mouse around it
+            // Displays location of mouse around it
             Point point = MouseInfo.getPointerInfo().getLocation();
+            Point frame = Evolutioner.frame.getLocation();
+            Insets insets = Evolutioner.frame.getInsets();
+
+            point.translate(frame.x - insets.left, frame.y);
+
             String x = point.x + "x";
             String y = point.y + "y";
 
@@ -138,25 +164,7 @@ public class Display extends JPanel implements Runnable, KeyListener {
         worldHeight = Evolutioner.frame.getHeight() - dirtHeight - grassHeight - insets.top - insets.bottom;
         dirtWidth = grassWidth = worldWidth;
 
-        System.out.println(Evolutioner.frame.getHeight() + " - " + dirtHeight + " - " + grassHeight + " - " + insets.top + " - " + insets.bottom + " = " + worldHeight);
+        //System.out.println(Evolutioner.frame.getHeight() + " - " + dirtHeight + " - " + grassHeight + " - " + insets.top + " - " + insets.bottom + " = " + worldHeight);
 
     }
-
-    @Override
-    public void keyTyped(KeyEvent e) {
-
-        System.out.println("Input !");
-
-        if (e.getKeyChar() == 'g'){
-
-            Farm.generateCreatures();
-
-        }
-    }
-
-    @Override
-    public void keyPressed(KeyEvent e) {}
-
-    @Override
-    public void keyReleased(KeyEvent e) {}
 }

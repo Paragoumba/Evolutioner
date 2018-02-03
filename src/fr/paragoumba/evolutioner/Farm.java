@@ -12,11 +12,10 @@ public class Farm implements Runnable {
     public static int baseHeight;
     private static Creature[] creatures;
     private static long runTime = 15000;
-    private static Thread livingThread;
 
-    public static void setCreatures(int creatures){
+    public static void setCreaturesNumber(int creaturesNumber){
 
-        Farm.creatures = new Creature[creatures];
+        Farm.creatures = new Creature[creaturesNumber];
 
     }
 
@@ -28,16 +27,19 @@ public class Farm implements Runnable {
 
     public static void generateCreatures(){
 
-        baseWidth = Evolutioner.frame.getWidth();
-        baseHeight = Evolutioner.frame.getHeight();
+        baseWidth = Display.worldWidth;
+        baseHeight = Display.worldHeight;
 
         for (int i = 0; i < creatures.length; ++i){
 
             creatures[i] = new Creature(3);
 
         }
+    }
 
-        livingThread = new Thread(creatures[0], "Thread - Living");
+    public static void startSimulation(){
+
+        Thread livingThread = new Thread(new Farm(), "Thread - LifeCycle");
         livingThread.start();
 
     }
@@ -51,7 +53,7 @@ public class Farm implements Runnable {
         }
     }
 
-    static Creature get1stCreature(){
+    public static Creature get1stCreature(){
 
         return creatures[0];
 
@@ -66,6 +68,12 @@ public class Farm implements Runnable {
         }
     }
 
+    public static void updateCoords(Dimension oldDimension, Dimension newDimension){
+
+        for (Creature creature : creatures) creature.updateCoords(oldDimension, newDimension);
+
+    }
+
     @Override
     public void run() {
 
@@ -73,7 +81,7 @@ public class Farm implements Runnable {
 
         for (Creature creature : creatures){
 
-            creature.run();
+            creature.live();
 
             try {
 

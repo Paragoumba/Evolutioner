@@ -1,6 +1,7 @@
 package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Display;
+import fr.paragoumba.evolutioner.Evolutioner;
 
 import java.awt.*;
 
@@ -23,10 +24,17 @@ public class Creature extends Entity implements Runnable {
     private Node[] nodes;
     private Muscle[] muscles;
 
+    public void live(){
+
+        Thread creatureThread = new Thread(this);
+        creatureThread.start();
+
+    }
+
     @Override
     public void run() {
 
-        boolean extending = true;
+        //boolean extending = true;
         long targetTime = 3;
         int velocityX = 1;
         int velocityY = 1;
@@ -35,72 +43,51 @@ public class Creature extends Entity implements Runnable {
 
             //Run code
             Node maxXNode = new Node(Display.worldWidth / 2, 0);
-            Node minXNode = new Node(Display.worldWidth / 2, 0);
             Node maxYNode = new Node(Display.worldHeight / 2, 0);
-            Node minYNode = new Node(Display.worldHeight / 2, 0);
 
+            //Check for Nodes with the highest X and Y
             for (Node node : nodes){
 
-                if (velocityX > 0) {
+                if (velocityX > 0 && node.relativeX > maxXNode.relativeX){
 
-                    if (node.relativeX > maxXNode.relativeX){
+                    maxXNode = node;
 
-                        maxXNode = node;
+                } else if (velocityX < 0 && node.relativeX < maxXNode.relativeX){
 
-                    } else if (node.relativeX < minXNode.relativeX){
+                    maxXNode = node;
 
-                        minXNode = node;
-
-                    }
-
-                } else if (velocityX < 0){
-
-                    if (node.relativeX < maxXNode.relativeX){
-
-                        maxXNode = node;
-
-                    } else if (node.relativeX > minXNode.relativeX){
-
-                        minXNode = node;
-
-                    }
                 }
 
-                if (velocityY > 0) {
+                if (velocityY > 0 && node.relativeY > maxYNode.relativeY){
 
-                    if (node.relativeY > maxYNode.relativeY){
+                    maxYNode = node;
 
-                        maxYNode = node;
+                } else if (velocityY < 0 && node.relativeY < maxYNode.relativeY){
 
-                    } else if (node.relativeY < minYNode.relativeY){
+                    maxYNode = node;
 
-                        minYNode = node;
-
-                    }
-
-                } else if (velocityY < 0){
-
-                    if (node.relativeY < maxYNode.relativeY){
-
-                        maxYNode = node;
-
-                    } else if (node.relativeY > minYNode.relativeY){
-
-                        minYNode = node;
-
-                    }
                 }
+
+                //System.out.println(maxYNode.relativeY);
             }
 
+            //Invert velocity if edge is touched
             if (maxXNode.relativeX >= Display.worldWidth || maxXNode.relativeX <= 0) velocityX *= -1;
             if (maxYNode.relativeY >= Display.worldHeight || maxYNode.relativeY <= 0) velocityY *= -1;
 
+            //if (Evolutioner.debug) System.out.println(velocityX + " (" + (maxXNode.relativeX >= Display.worldWidth) + " || " + (maxXNode.relativeX <= 0) + ")(" + maxXNode.relativeX + " >= " +  Display.worldWidth + " || " + maxXNode.relativeX + " <= " + 0 + ")");
+
+            //if (Evolutioner.debug) System.out.println(velocityY + " (" + (maxYNode.relativeY >= Display.worldHeight) + " || " + (maxYNode.relativeY <= 0) + ")(" + maxYNode.relativeY + " >= " +  Display.worldHeight + " || " + maxYNode.relativeY + " <= " + 0 + ")");
+
+            //Apply velocity to each Node
             for (Node node : nodes) {
                 
                 node.relativeX += velocityX;
                 node.relativeY += velocityY;
             
             }
+
+            //Apply velocity to each Muscle
             for (Muscle muscle : muscles) {
 
                 muscle.relativeX1 += velocityX;
@@ -136,6 +123,29 @@ public class Creature extends Entity implements Runnable {
             node.draw(graphics);
 
         }
+    }
+
+    public void updateCoords(Dimension oldDimension, Dimension newDimension){
+
+        for (Node node : nodes) node.updateCoords(oldDimension, newDimension);
+        for (Muscle muscle : muscles) muscle.updateCoords(oldDimension, newDimension);
+
+    }
+
+    public int getAverageX(){
+
+        int x = 0;
+        int i = 0;
+
+        for (Node node : nodes){
+
+            x += node.relativeX;
+            ++i;
+
+        }
+
+        return x / i;
+
     }
 
     public int getAverageY(){

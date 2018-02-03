@@ -18,8 +18,8 @@ public class Sign extends Entity {
 
     }
 
-    private final int width = 50;
-    private final int height = 75;
+    private int width = 50;
+    private int height = 75;
     private int x;
     private int y;
     private final Color color = Color.WHITE;
@@ -33,8 +33,20 @@ public class Sign extends Entity {
         graphics.fillRect(x, y, width, height / 3);
         graphics.fillRect(x + width / 3, y + height / 3, width / 3, height / 3 * 2);
 
+        System.out.println(x + ";" + Converter.convert(Unit.PIXEL, Unit.METER, x));
+
         graphics.setColor(Color.BLACK);
-        graphics.drawString(Converter.convert(Unit.PIXEL, Unit.METER, x) + "m", x + width / 7, y + height / 3 / 4 + 10);
+        graphics.drawString(Converter.convert(Unit.PIXEL, Unit.METER, x + 250) + "m", x + width / 4 / 3, y + height / 3 / 4 + 10);
+
+    }
+
+    @Override
+    public void updateCoords(Dimension oldDimension, Dimension newDimension) {
+
+        x = x * newDimension.width / oldDimension.width;
+        y = y * newDimension.height / oldDimension.height;
+        width = width * newDimension.width / oldDimension.width;
+        height = height * newDimension.height / oldDimension.height;
 
     }
 }

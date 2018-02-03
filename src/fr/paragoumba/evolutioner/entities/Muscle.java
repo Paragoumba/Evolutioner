@@ -109,6 +109,16 @@ class Muscle {
         graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight - 1, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight - 1);
         graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight);
         graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight + 1, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight + 1);
+
+    }
+
+    public void updateCoords(Dimension oldDimension, Dimension newDimension){
+
+        relativeX1 = relativeX1 * newDimension.width / oldDimension.width;
+        relativeY1 = relativeY1 * newDimension.height / oldDimension.height;
+        relativeX2 = relativeX2 * newDimension.width / oldDimension.width;
+        relativeY2 = relativeY2 * newDimension.height / oldDimension.height;
+
     }
 
     private void initColor(){

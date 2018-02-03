@@ -1,10 +1,13 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.entities.Sign;
-
+import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ComponentAdapter;
+import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
 
 import static fr.paragoumba.evolutioner.Display.fps;
 
@@ -14,11 +17,13 @@ public class Evolutioner {
     public static final int BASE_TIME = 1;
     public static final String version = "0.5b1";
     public static final String title = "Evolutioner";
-
     public static JFrame frame = new JFrame(title + " - " + version);
+
     private static JFrame configFrame = new JFrame(title + " - Config");
     private static Display display = new Display();
     private static Thread displayThread = new Thread(display, "Thread-Display");
+
+    private static Dimension oldDimension;
 
     public static void main(String[] args) {
 
@@ -39,24 +44,46 @@ public class Evolutioner {
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setPreferredSize(dimension);
         frame.setSize(dimension);
+
+        try {
+
+            frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("icon.png")));
+
+        } catch (IOException e) {
+
+            e.printStackTrace();
+
+        }
+
+        oldDimension = frame.getSize();
+
         frame.addKeyListener(new InputHandler());
         frame.setFocusable(true);
         frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setTitle(title);
         frame.setLocationRelativeTo(null);
+        display.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+                Dimension newDimension = e.getComponent().getSize();
+
+                EntityManager.updateCoords(oldDimension, newDimension);
+                Farm.updateCoords(oldDimension, newDimension);
+
+                oldDimension = newDimension;
+
+            }
+        });
 
         Display.setWorldSize();
-        Farm.setCreatures(1);
+        Farm.setCreaturesNumber(10);
         Farm.generateCreatures();
-        EntityManager.addEntity(new Sign(0));
-        EntityManager.addEntity(new Sign(250));
-        EntityManager.addEntity(new Sign(500));
-        EntityManager.addEntity(new Sign(750));
-        EntityManager.addEntity(new Sign(1000));
-        EntityManager.addEntity(new Sign(1250));
-        EntityManager.addEntity(new Sign(1500));
-        EntityManager.addEntity(new Sign(1750));
+        Farm.startSimulation();
+
+        EntityManager.setSigns();
 
         frame.pack();
         frame.setVisible(true);

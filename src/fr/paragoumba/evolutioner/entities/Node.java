@@ -66,6 +66,13 @@ class Node {
 
     }
 
+    public void updateCoords(Dimension oldDimension, Dimension newDimension){
+
+        relativeX = relativeX * newDimension.width / oldDimension.width;
+        relativeY = relativeY * newDimension.height / oldDimension.height;
+
+    }
+
     private void initColor(){
 
         int rgb = (int) (friction * 255);
