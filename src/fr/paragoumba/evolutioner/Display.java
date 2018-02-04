@@ -28,11 +28,11 @@ public class Display extends JPanel implements Runnable {
     @Override
     public void run() {
 
-        double targetTime = (1e3 / fps);
         int i = 0;
 
         while (running) {
 
+            double targetTime = (1e3 / fps);
             long start = System.currentTimeMillis();
 
             //Run code
@@ -65,7 +65,7 @@ public class Display extends JPanel implements Runnable {
                 //Correct FPS
                 //lastFPSDisplay -= 20;
 
-                if (Evolutioner.debug) Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS (" + lastFPSDisplay + "ms)");
+                Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS (" + lastFPSDisplay + "ms)");
 
                 lastFPSDisplay = 0;
 
@@ -82,8 +82,6 @@ public class Display extends JPanel implements Runnable {
 
     @Override
     public void paintComponent(Graphics graphics) {
-
-        setWorldSize();
 
         //if (Evolutioner.debug) System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
 
@@ -131,7 +129,7 @@ public class Display extends JPanel implements Runnable {
         graphics.setColor(GRASS_COLOR);
         graphics.fillRect(0, worldHeight, grassWidth, grassHeight);
 
-        Farm.drawCreatures(graphics);
+        Farm.drawCreature(graphics);
         EntityManager.drawEntities(graphics);
 
         if (Evolutioner.debug){

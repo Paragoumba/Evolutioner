@@ -12,6 +12,7 @@ public class Farm implements Runnable {
     public static int baseHeight;
     private static Creature[] creatures;
     private static long runTime = 15000;
+    private static int livingCreature;
 
     public static void setCreaturesNumber(int creaturesNumber){
 
@@ -30,11 +31,8 @@ public class Farm implements Runnable {
         baseWidth = Display.worldWidth;
         baseHeight = Display.worldHeight;
 
-        for (int i = 0; i < creatures.length; ++i){
+        for (int i = 0; i < creatures.length; ++i) creatures[i] = new Creature(3);
 
-            creatures[i] = new Creature(3);
-
-        }
     }
 
     public static void startSimulation(){
@@ -44,13 +42,12 @@ public class Farm implements Runnable {
 
     }
 
-    public static void drawCreatures(Graphics graphics){
+    public static void drawCreature(Graphics graphics){
 
-        for (Creature creature : creatures){
+        //for (Creature creature : creatures) creature.draw(graphics);
 
-            creature.draw(graphics);
+        creatures[livingCreature].draw(graphics);
 
-        }
     }
 
     public static Creature get1stCreature(){
@@ -61,11 +58,8 @@ public class Farm implements Runnable {
 
     public static void killCreatures(){
 
-        for (Creature creature : creatures){
+        for (Creature creature : creatures) creature.die();
 
-            creature.die();
-
-        }
     }
 
     public static void updateCoords(Dimension oldDimension, Dimension newDimension){
@@ -79,9 +73,10 @@ public class Farm implements Runnable {
 
         long runTime = Farm.runTime;
 
-        for (Creature creature : creatures){
+        for (int i = 0; i <= creatures.length; ++i){
 
-            creature.live();
+            livingCreature = i;
+            creatures[i].live();
 
             try {
 
@@ -93,7 +88,8 @@ public class Farm implements Runnable {
 
             }
 
-            creature.die();
+            creatures[i].die();
+
         }
     }
 }

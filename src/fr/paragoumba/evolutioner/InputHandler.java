@@ -10,15 +10,30 @@ public class InputHandler implements KeyListener {
 
         if (Evolutioner.debug) System.out.println("Input ! (" + e.getKeyChar() + ", Control:" + e.isControlDown() + ", Alt:" + e.isAltDown() + ")");
 
-        if (e.isAltDown() && e.getKeyChar() == 'k'){
+        if (e.isAltDown()){
 
-            Evolutioner.displayConfigFrame();
+            char c = e.getKeyChar();
 
-        } else if (e.getKeyChar() == 'g'){
+            if (c == '&'){
 
-            Farm.generateCreatures();
+                Evolutioner.displayConfigFrame();
 
+            } else if (c == 'é'){
+
+                Evolutioner.displayStatsFrame();
+
+            } else if (Evolutioner.debug && c == '"'){
+
+                Evolutioner.displayLogFrame();
+
+            } else if (Evolutioner.debug && c == '\''){
+
+                Evolutioner.displayDebugFrame();
+
+            }
         }
+
+        else if (e.getKeyChar() == 'g') Farm.generateCreatures();
     }
 
     @Override

@@ -2,6 +2,7 @@ package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Converter;
 import fr.paragoumba.evolutioner.Display;
+import fr.paragoumba.evolutioner.Evolutioner;
 import fr.paragoumba.evolutioner.Unit;
 
 import java.awt.*;
@@ -33,10 +34,10 @@ public class Sign extends Entity {
         graphics.fillRect(x, y, width, height / 3);
         graphics.fillRect(x + width / 3, y + height / 3, width / 3, height / 3 * 2);
 
-        System.out.println(x + ";" + Converter.convert(Unit.PIXEL, Unit.METER, x));
+        //if (Evolutioner.debug) System.out.println(x + ";" + Converter.convert(Unit.PIXEL, Unit.METER, x));
 
         graphics.setColor(Color.BLACK);
-        graphics.drawString(Converter.convert(Unit.PIXEL, Unit.METER, x + 250) + "m", x + width / 4 / 3, y + height / 3 / 4 + 10);
+        graphics.drawString(Converter.convert(Unit.PIXEL, Unit.METER, x + 1) + "m", x + width / 4 / 3, y + height / 3 / 4 + 10);
 
     }
 

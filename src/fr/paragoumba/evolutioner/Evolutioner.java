@@ -2,11 +2,12 @@ package fr.paragoumba.evolutioner;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
+import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
-import java.awt.image.BufferedImage;
 import java.io.IOException;
 
 import static fr.paragoumba.evolutioner.Display.fps;
@@ -19,7 +20,6 @@ public class Evolutioner {
     public static final String title = "Evolutioner";
     public static JFrame frame = new JFrame(title + " - " + version);
 
-    private static JFrame configFrame = new JFrame(title + " - Config");
     private static Display display = new Display();
     private static Thread displayThread = new Thread(display, "Thread-Display");
 
@@ -47,7 +47,7 @@ public class Evolutioner {
 
         try {
 
-            frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("icon.png")));
+            frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("res/icon30x30.png")));
 
         } catch (IOException e) {
 
@@ -68,6 +68,8 @@ public class Evolutioner {
             @Override
             public void componentResized(ComponentEvent e) {
 
+                Display.setWorldSize();
+
                 Dimension newDimension = e.getComponent().getSize();
 
                 EntityManager.updateCoords(oldDimension, newDimension);
@@ -82,7 +84,6 @@ public class Evolutioner {
         Farm.setCreaturesNumber(10);
         Farm.generateCreatures();
         Farm.startSimulation();
-
         EntityManager.setSigns();
 
         frame.pack();
@@ -94,30 +95,34 @@ public class Evolutioner {
 
     public static void displayConfigFrame(){
 
+        JFrame configFrame = new JFrame(title + " - Config");
         JPanel panel = new JPanel();
+        JTextField fpsTextField = new JTextField(Integer.toString(fps), 2);
+        JTextField widthTextField = new JTextField(Integer.toString(frame.getWidth()), 3);
+        JTextField heightTextField = new JTextField(Integer.toString(frame.getHeight()), 3);
+        JButton validateButton = new JButton("Validate");
 
         configFrame.setContentPane(panel);
-        configFrame.setPreferredSize(new Dimension(300, 50));
-        configFrame.setDefaultCloseOperation(WindowConstants.HIDE_ON_CLOSE);
+        configFrame.setResizable(false);
+        configFrame.setLocationRelativeTo(null);
 
-        JTextField fpsTextField = new JTextField();
-        JTextField widthTextField = new JTextField();
-        JTextField heightTextField = new JTextField();
-        JButton button = new JButton("Validate");
+        panel.add(new JLabel("fps"));
+        panel.add(fpsTextField);
+        panel.add(new JLabel("width"));
+        panel.add(widthTextField);
+        panel.add(new JLabel("height"));
+        panel.add(heightTextField);
+        panel.add(validateButton);
 
-        fpsTextField.setText(Integer.toString(fps));
-        widthTextField.setText(Integer.toString(frame.getWidth()));
-        heightTextField.setText(Integer.toString(frame.getHeight()));
+        PlainDocument fpsTextFieldDocument = (PlainDocument) fpsTextField.getDocument();
+        PlainDocument widthTextFieldDocument = (PlainDocument) widthTextField.getDocument();
+        PlainDocument heightTextFieldDocument= (PlainDocument) heightTextField.getDocument();
 
-        fpsTextField.setDocument(new PlainDocument());
-        widthTextField.setDocument(new PlainDocument());
-        heightTextField.setDocument(new PlainDocument());
+        fpsTextFieldDocument.setDocumentFilter(new DocumentFilter());
+        widthTextFieldDocument.setDocumentFilter(new DocumentFilter());
+        heightTextFieldDocument.setDocumentFilter(new DocumentFilter());
 
-        fpsTextField.setPreferredSize(new Dimension(100, fpsTextField.getHeight()));
-        widthTextField.setSize(100, widthTextField.getHeight());
-        heightTextField.setSize(100, heightTextField.getHeight());
-
-        button.addActionListener(e -> {
+        validateButton.addActionListener(e -> {
 
             DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode();
             int width = displayMode.getWidth();
@@ -164,13 +169,66 @@ public class Evolutioner {
             frame.setSize(width, height);
         });
 
-        panel.add(/*"fpsTextField", */fpsTextField);
-        panel.add(/*"widthTextField", */widthTextField);
-        panel.add(/*"heightTextField", */heightTextField);
-        panel.add(/*"button", */button);
-
+        configFrame.setAlwaysOnTop(true);
         configFrame.pack();
         configFrame.setVisible(true);
+
+    }
+
+    public static void displayStatsFrame(){
+
+        JFrame logFrame = new JFrame(title + " - Stats");
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Stats");
+
+        logFrame.setContentPane(panel);
+        panel.add(label);
+        logFrame.setLocationRelativeTo(null);
+        logFrame.pack();
+        logFrame.setVisible(true);
+
+    }
+
+    public static void displayLogFrame(){
+
+        JFrame logFrame = new JFrame(title + " - Logs");
+        JPanel panel = new JPanel();
+        TextArea textArea = new TextArea();
+
+        panel.addComponentListener(new ComponentAdapter() {
+
+            @Override
+            public void componentResized(ComponentEvent e) {
+
+                Dimension dimension = e.getComponent().getSize();
+
+                textArea.setSize(dimension.width - 8, dimension.height - 8);
+                textArea.setLocation(4, 4);
+
+            }
+        });
+        
+        logFrame.setContentPane(panel);
+        textArea.setEditable(false);
+        panel.add(textArea);
+        logFrame.setSize(500, 500);
+        logFrame.setLocationRelativeTo(null);
+        logFrame.pack();
+        logFrame.setVisible(true);
+
+    }
+
+    public static void displayDebugFrame(){
+
+        JFrame logFrame = new JFrame(title + " - Debug");
+        JPanel panel = new JPanel();
+        JLabel label = new JLabel("Debug");
+
+        logFrame.setContentPane(panel);
+        panel.add(label);
+        logFrame.setLocationRelativeTo(null);
+        logFrame.pack();
+        logFrame.setVisible(true);
 
     }
 }

@@ -12,13 +12,11 @@ class Node {
     Node() {
 
         Random random = new Random();
-
         int bound = Display.worldWidth + 1;
 
         if (bound < 0) bound = 1;
 
         this.relativeX = random.nextInt(bound);
-
         bound = Display.worldHeight + 1;
 
         if (bound < 0) bound = 1;
@@ -33,10 +31,8 @@ class Node {
     Node(int relativeX, int relativeY) {
 
         Random random = new Random();
-
         this.relativeX = relativeX;
         this.relativeY = relativeY;
-
         this.friction = random.nextDouble();
 
         initColor();

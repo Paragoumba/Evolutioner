@@ -48,25 +48,11 @@ public class Creature extends Entity implements Runnable {
             //Check for Nodes with the highest X and Y
             for (Node node : nodes){
 
-                if (velocityX > 0 && node.relativeX > maxXNode.relativeX){
+                if (velocityX > 0 && node.relativeX > maxXNode.relativeX) maxXNode = node;
+                else if (velocityX < 0 && node.relativeX < maxXNode.relativeX) maxXNode = node;
 
-                    maxXNode = node;
-
-                } else if (velocityX < 0 && node.relativeX < maxXNode.relativeX){
-
-                    maxXNode = node;
-
-                }
-
-                if (velocityY > 0 && node.relativeY > maxYNode.relativeY){
-
-                    maxYNode = node;
-
-                } else if (velocityY < 0 && node.relativeY < maxYNode.relativeY){
-
-                    maxYNode = node;
-
-                }
+                if (velocityY > 0 && node.relativeY > maxYNode.relativeY) maxYNode = node;
+                else if (velocityY < 0 && node.relativeY < maxYNode.relativeY) maxYNode = node;
 
                 //System.out.println(maxYNode.relativeY);
             }
@@ -112,17 +98,9 @@ public class Creature extends Entity implements Runnable {
     @Override
     public void draw(Graphics graphics){
 
-        for (Muscle muscle : muscles){
+        for (Muscle muscle : muscles) muscle.draw(graphics);
+        for (Node node : nodes) node.draw(graphics);
 
-            muscle.draw(graphics);
-
-        }
-
-        for (Node node : nodes){
-
-            node.draw(graphics);
-
-        }
     }
 
     public void updateCoords(Dimension oldDimension, Dimension newDimension){

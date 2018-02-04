@@ -124,7 +124,6 @@ class Muscle {
     private void initColor(){
 
         int ratio = (int) (strength * (50 + 1));
-
         color = new Color(255, ratio, ratio);
 
     }
