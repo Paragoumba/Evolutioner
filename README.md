@@ -1,2 +1,2 @@
 # Evolutioner
-An application that simulate the evolution process
+An application that simulates the evolution process
