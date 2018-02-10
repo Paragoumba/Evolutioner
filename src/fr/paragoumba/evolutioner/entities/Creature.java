@@ -1,7 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.Display;
-import fr.paragoumba.evolutioner.Evolutioner;
+import fr.paragoumba.evolutioner.Graphic.Display;
 
 import java.awt.*;
 
@@ -20,7 +19,7 @@ public class Creature extends Entity implements Runnable {
         }
     }
 
-    private boolean living = true;
+    public boolean living = true;
     private Node[] nodes;
     private Muscle[] muscles;
 

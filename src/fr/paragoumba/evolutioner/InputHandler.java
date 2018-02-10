@@ -2,6 +2,7 @@ package fr.paragoumba.evolutioner;
 
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
+import java.util.logging.Logger;
 
 public class InputHandler implements KeyListener {
 
@@ -10,30 +11,33 @@ public class InputHandler implements KeyListener {
 
         if (Evolutioner.debug) System.out.println("Input ! (" + e.getKeyChar() + ", Control:" + e.isControlDown() + ", Alt:" + e.isAltDown() + ")");
 
-        if (e.isAltDown()){
+        char c = e.getKeyChar();
 
-            char c = e.getKeyChar();
+        if (c == '&'){
 
-            if (c == '&'){
+            Evolutioner.displayConfigFrame();
 
-                Evolutioner.displayConfigFrame();
+        } else if (c == 'é'){
 
-            } else if (c == 'é'){
+            Evolutioner.displayStatsFrame();
 
-                Evolutioner.displayStatsFrame();
+        } else if (Evolutioner.debug && c == '"'){
 
-            } else if (Evolutioner.debug && c == '"'){
+            Evolutioner.displayLogFrame();
 
-                Evolutioner.displayLogFrame();
+        } else if (Evolutioner.debug && c == '\''){
 
-            } else if (Evolutioner.debug && c == '\''){
+            Evolutioner.displayDebugFrame();
 
-                Evolutioner.displayDebugFrame();
+        } else if (c == 'g'){
 
-            }
+            Farm.generateCreatures(Farm.getDefaultCreatureNumber());
+
+        } else if (c == 'h'){
+
+            Farm.startSimulation();
+
         }
-
-        else if (e.getKeyChar() == 'g') Farm.generateCreatures();
     }
 
     @Override
@@ -41,4 +45,5 @@ public class InputHandler implements KeyListener {
 
     @Override
     public void keyReleased(KeyEvent e) {}
+
 }

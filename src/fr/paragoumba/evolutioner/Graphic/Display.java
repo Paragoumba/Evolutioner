@@ -1,11 +1,11 @@
-package fr.paragoumba.evolutioner;
+package fr.paragoumba.evolutioner.Graphic;
+
+import fr.paragoumba.evolutioner.EntityManager;
+import fr.paragoumba.evolutioner.Evolutioner;
+import fr.paragoumba.evolutioner.Farm;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.KeyEvent;
-import java.awt.event.KeyListener;
-import java.text.DecimalFormat;
-import java.util.Random;
 
 public class Display extends JPanel implements Runnable {
 

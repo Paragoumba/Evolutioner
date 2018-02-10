@@ -1,16 +1,18 @@
 package fr.paragoumba.evolutioner;
 
+import fr.paragoumba.evolutioner.Graphic.Display;
+import fr.paragoumba.evolutioner.Graphic.StartingPanel;
+
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
-import java.awt.event.ComponentListener;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import static fr.paragoumba.evolutioner.Display.fps;
+import static fr.paragoumba.evolutioner.Graphic.Display.fps;
 
 public class Evolutioner {
 
@@ -19,13 +21,14 @@ public class Evolutioner {
     public static final String version = "0.5b1";
     public static final String title = "Evolutioner";
     public static JFrame frame = new JFrame(title + " - " + version);
+    public static JLabel livingCreatures = new JLabel("None.");
 
     private static Display display = new Display();
     private static Thread displayThread = new Thread(display, "Thread-Display");
 
     private static Dimension oldDimension;
 
-    public static void main(String[] args) {
+    public static void main(String[] args) throws InterruptedException {
 
         for (String arg : args) {
 
@@ -40,10 +43,14 @@ public class Evolutioner {
         //Initializing display's components
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 
-        frame.setContentPane(display);
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
         frame.setPreferredSize(dimension);
         frame.setSize(dimension);
+
+        /* StartingPanel */
+        StartingPanel startingPanel = new StartingPanel();
+
+        frame.setContentPane(startingPanel);
 
         try {
 
@@ -55,14 +62,26 @@ public class Evolutioner {
 
         }
 
-        oldDimension = frame.getSize();
-
-        frame.addKeyListener(new InputHandler());
-        frame.setFocusable(true);
-        frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
+        frame.setLocationRelativeTo(null);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setTitle(title);
-        frame.setLocationRelativeTo(null);
+        frame.pack();
+        frame.setVisible(true);
+
+        Thread.sleep(1000);
+        /* END */
+
+        /* TutorialPanel */
+
+        /* END */
+
+        /* Display */
+        oldDimension = frame.getSize();
+        InputHandler inputHandler = new InputHandler();
+
+        frame.addKeyListener(inputHandler);
+        frame.setFocusable(true);
+        frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
         display.addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -81,13 +100,13 @@ public class Evolutioner {
         });
 
         Display.setWorldSize();
-        Farm.setCreaturesNumber(10);
-        Farm.generateCreatures();
+        Farm.generateCreatures(10);
         Farm.startSimulation();
         EntityManager.setSigns();
 
+        frame.setContentPane(display);
         frame.pack();
-        frame.setVisible(true);
+        /* END*/
 
         displayThread.start();
 
@@ -97,6 +116,7 @@ public class Evolutioner {
 
         JFrame configFrame = new JFrame(title + " - Config");
         JPanel panel = new JPanel();
+        JTextField creatureNumberTextField = new JTextField(Integer.toString(Farm.getDefaultCreatureNumber()), 3);
         JTextField fpsTextField = new JTextField(Integer.toString(fps), 2);
         JTextField widthTextField = new JTextField(Integer.toString(frame.getWidth()), 3);
         JTextField heightTextField = new JTextField(Integer.toString(frame.getHeight()), 3);
@@ -106,18 +126,22 @@ public class Evolutioner {
         configFrame.setResizable(false);
         configFrame.setLocationRelativeTo(null);
 
-        panel.add(new JLabel("fps"));
+        panel.add(new JLabel("Number of creatures"));
+        panel.add(creatureNumberTextField);
+        panel.add(new JLabel("FPS"));
         panel.add(fpsTextField);
-        panel.add(new JLabel("width"));
+        panel.add(new JLabel("Width"));
         panel.add(widthTextField);
-        panel.add(new JLabel("height"));
+        panel.add(new JLabel("Height"));
         panel.add(heightTextField);
         panel.add(validateButton);
 
+        PlainDocument creatureNumberTextFieldDocument = (PlainDocument) fpsTextField.getDocument();
         PlainDocument fpsTextFieldDocument = (PlainDocument) fpsTextField.getDocument();
         PlainDocument widthTextFieldDocument = (PlainDocument) widthTextField.getDocument();
         PlainDocument heightTextFieldDocument= (PlainDocument) heightTextField.getDocument();
 
+        creatureNumberTextFieldDocument.setDocumentFilter(new DocumentFilter());
         fpsTextFieldDocument.setDocumentFilter(new DocumentFilter());
         widthTextFieldDocument.setDocumentFilter(new DocumentFilter());
         heightTextFieldDocument.setDocumentFilter(new DocumentFilter());
@@ -127,6 +151,8 @@ public class Evolutioner {
             DisplayMode displayMode = GraphicsEnvironment.getLocalGraphicsEnvironment().getScreenDevices()[0].getDisplayMode();
             int width = displayMode.getWidth();
             int height = displayMode.getHeight();
+
+            if (!creatureNumberTextField.getText().equals("")) Farm.setDefaultCreatureNumber(Integer.parseInt(creatureNumberTextField.getText()));
 
             if (!fpsTextField.getText().equals("")) {
 
@@ -183,6 +209,7 @@ public class Evolutioner {
 
         logFrame.setContentPane(panel);
         panel.add(label);
+        panel.add(livingCreatures);
         logFrame.setLocationRelativeTo(null);
         logFrame.pack();
         logFrame.setVisible(true);
