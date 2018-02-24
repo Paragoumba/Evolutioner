@@ -3,6 +3,7 @@ package fr.paragoumba.evolutioner.Graphic;
 import fr.paragoumba.evolutioner.EntityManager;
 import fr.paragoumba.evolutioner.Evolutioner;
 import fr.paragoumba.evolutioner.Farm;
+import fr.paragoumba.evolutioner.entities.Creature;
 
 import javax.swing.*;
 import java.awt.*;
@@ -99,17 +100,24 @@ public class Display extends JPanel implements Runnable {
 
         int eyesYDistance = 30 * worldHeight / 811;
         int nodesYDistance = Display.worldHeight;
-        int averageYNode = Farm.get1stCreature().getAverageY();
+        Creature firstCreature = Farm.get1stCreature();
+        int averageYNode = firstCreature != null ? firstCreature.getAverageY() : 0;
         int yEyes = (75 + 50 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
 
         int eyesXDistance = 30 * worldWidth / 1600;
         int nodesXDistance = Display.worldWidth;
-        int averageXNode = Farm.get1stCreature().getAverageX();
+        int averageXNode = firstCreature != null ? firstCreature.getAverageX() : 0;
         int xEyes = (75 + 50 + averageXNode * eyesXDistance / nodesXDistance);
 
         // Makes the sun blinks his eyes
         int eyesHeight = 5;
-        if (i >= 620) eyesHeight = 2;
+
+        if (i >= 620){
+
+            eyesHeight = 2;
+            yEyes -= 5 - 2;
+
+        }
         if (i >= 640){
 
             i = 0;

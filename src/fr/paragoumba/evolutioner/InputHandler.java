@@ -31,7 +31,7 @@ public class InputHandler implements KeyListener {
 
         } else if (c == 'g'){
 
-            Farm.generateCreatures(Farm.getDefaultCreatureNumber());
+            Farm.generateCreatures();
 
         } else if (c == 'h'){
 

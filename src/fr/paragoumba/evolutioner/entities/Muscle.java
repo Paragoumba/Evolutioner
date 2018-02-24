@@ -19,13 +19,9 @@ class Muscle {
 
         int bound = Display.worldWidth + 1;
 
-        if (bound < 0) bound = 1;
-
         this.relativeX2 = random.nextInt(bound);
 
         bound = Display.worldHeight + 1;
-
-        if (bound < 0) bound = 1;
 
         this.relativeY2 = random.nextInt(bound);
         this.extendedLength = random.nextDouble() * 50;
@@ -35,7 +31,7 @@ class Muscle {
         this.strength = random.nextDouble();
 
         initColor();
-        
+
     }
 
     Muscle(int relativeX1, int relativeY1, int relativeX2, int relativeY2) {
@@ -47,7 +43,6 @@ class Muscle {
         this.relativeY1 = relativeY1;
         this.relativeX2 = relativeX2;
         this.relativeY2 = relativeY2;
-
         this.extendedLength = random.nextDouble() * 50;
         this.contractedLength = random.nextDouble() * extendedLength;
         this.extendedTime = ratio;

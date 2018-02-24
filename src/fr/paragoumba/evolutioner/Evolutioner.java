@@ -25,7 +25,6 @@ public class Evolutioner {
 
     private static Display display = new Display();
     private static Thread displayThread = new Thread(display, "Thread-Display");
-
     private static Dimension oldDimension;
 
     public static void main(String[] args) throws InterruptedException {
@@ -44,13 +43,9 @@ public class Evolutioner {
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
+        frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
         frame.setPreferredSize(dimension);
         frame.setSize(dimension);
-
-        /* StartingPanel */
-        StartingPanel startingPanel = new StartingPanel();
-
-        frame.setContentPane(startingPanel);
 
         try {
 
@@ -62,6 +57,10 @@ public class Evolutioner {
 
         }
 
+        /* StartingPanel */
+        StartingPanel startingPanel = new StartingPanel();
+
+        frame.setContentPane(startingPanel);
         frame.setLocationRelativeTo(null);
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setTitle(title);
@@ -73,6 +72,8 @@ public class Evolutioner {
 
         /* TutorialPanel */
 
+        //Code
+
         /* END */
 
         /* Display */
@@ -81,7 +82,6 @@ public class Evolutioner {
 
         frame.addKeyListener(inputHandler);
         frame.setFocusable(true);
-        frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
         display.addComponentListener(new ComponentAdapter() {
 
             @Override
@@ -100,9 +100,9 @@ public class Evolutioner {
         });
 
         Display.setWorldSize();
-        Farm.generateCreatures(10);
-        Farm.startSimulation();
         EntityManager.setSigns();
+        Farm.generateCreatures();
+        Farm.startSimulation();
 
         frame.setContentPane(display);
         frame.pack();
@@ -116,9 +116,14 @@ public class Evolutioner {
 
         JFrame configFrame = new JFrame(title + " - Config");
         JPanel panel = new JPanel();
+
+        JLabel creatureNumberJLabel = new JLabel("Number of creatures");
         JTextField creatureNumberTextField = new JTextField(Integer.toString(Farm.getDefaultCreatureNumber()), 3);
+        JLabel fpsJLabel = new JLabel("FPS");
         JTextField fpsTextField = new JTextField(Integer.toString(fps), 2);
+        JLabel widthJLabel = new JLabel("Width");
         JTextField widthTextField = new JTextField(Integer.toString(frame.getWidth()), 3);
+        JLabel heightJLabel = new JLabel("Height");
         JTextField heightTextField = new JTextField(Integer.toString(frame.getHeight()), 3);
         JButton validateButton = new JButton("Validate");
 
@@ -126,13 +131,13 @@ public class Evolutioner {
         configFrame.setResizable(false);
         configFrame.setLocationRelativeTo(null);
 
-        panel.add(new JLabel("Number of creatures"));
+        panel.add(creatureNumberJLabel);
         panel.add(creatureNumberTextField);
-        panel.add(new JLabel("FPS"));
+        panel.add(fpsJLabel);
         panel.add(fpsTextField);
-        panel.add(new JLabel("Width"));
+        panel.add(widthJLabel);
         panel.add(widthTextField);
-        panel.add(new JLabel("Height"));
+        panel.add(heightJLabel);
         panel.add(heightTextField);
         panel.add(validateButton);
 
@@ -258,4 +263,13 @@ public class Evolutioner {
         logFrame.setVisible(true);
 
     }
+
+    /* Key bindings
+    & : Show up config frame.
+    é : Show up stats frame
+    " : Show up log frame.
+    \ : Show up debug frame.
+    g : Generate creatures.
+    h : Run Simulation.
+    */
 }

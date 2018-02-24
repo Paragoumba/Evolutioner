@@ -12,20 +12,20 @@ public class Farm implements Runnable {
     public static int baseWidth;
     public static int baseHeight;
     private static Creature[] creatures = new Creature[0];
-    private static long runTime = 15000;
+    private static long runTime = 1000;
     private static int livingCreature;
     private static boolean running = false;
-    private static int defaultCreatureNumber;
+    private static int creatureNumber = 10;
 
     public static void setDefaultCreatureNumber(int creatureNumber){
 
-        Farm.defaultCreatureNumber = creatureNumber;
+        Farm.creatureNumber = creatureNumber;
 
     }
 
     public static int getDefaultCreatureNumber() {
 
-        return defaultCreatureNumber;
+        return creatureNumber;
 
     }
 
@@ -35,16 +35,16 @@ public class Farm implements Runnable {
 
     }
 
-    public static void generateCreatures(int creaturesNumber){
+    public static void generateCreatures(){
 
         baseWidth = Display.worldWidth;
         baseHeight = Display.worldHeight;
 
         stopSimulation();
 
-        creatures = new Creature[creaturesNumber];
+        creatures = new Creature[creatureNumber];
 
-        for (int i = 0; i < creaturesNumber; ++i) creatures[i] = new Creature(3);
+        for (int i = 0; i < creatureNumber; ++i) creatures[i] = new Creature(3);
 
     }
 
@@ -65,13 +65,11 @@ public class Farm implements Runnable {
 
         pauseSimulation();
         killCreatures();
-        creatures = new Creature[defaultCreatureNumber];
+        creatures = new Creature[creatureNumber];
 
     }
 
     public static void drawCreature(Graphics graphics){
-
-        //for (Creature creature : creatures) creature.draw(graphics);
 
         StringBuilder livingCreatures = new StringBuilder();
 
@@ -85,7 +83,7 @@ public class Farm implements Runnable {
 
     public static Creature get1stCreature(){
 
-        return creatures[0];
+        return creatures.length > 0 ? creatures[0] : null;
 
     }
 
@@ -107,7 +105,7 @@ public class Farm implements Runnable {
         running = true;
         long runTime = Farm.runTime;
 
-        for (int i = 0; running && i <= creatures.length; ++i){
+        for (int i = 0; running && i < creatures.length; ++i){
 
             livingCreature = i;
             creatures[i].live();
