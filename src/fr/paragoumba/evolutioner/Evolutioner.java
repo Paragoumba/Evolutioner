@@ -1,7 +1,8 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.Graphic.Display;
-import fr.paragoumba.evolutioner.Graphic.StartingPanel;
+import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.StartingPanel;
+import fr.paragoumba.evolutioner.graphic.TutorialPanel;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
@@ -12,7 +13,7 @@ import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
 
-import static fr.paragoumba.evolutioner.Graphic.Display.fps;
+import static fr.paragoumba.evolutioner.graphic.Display.fps;
 
 public class Evolutioner {
 
@@ -71,9 +72,11 @@ public class Evolutioner {
         /* END */
 
         /* TutorialPanel */
+        TutorialPanel tutorialPanel = new TutorialPanel();
+        frame.setContentPane(tutorialPanel);
+        frame.pack();
 
-        //Code
-
+        Thread.sleep(1000);
         /* END */
 
         /* Display */
@@ -119,12 +122,16 @@ public class Evolutioner {
 
         JLabel creatureNumberJLabel = new JLabel("Number of creatures");
         JTextField creatureNumberTextField = new JTextField(Integer.toString(Farm.getDefaultCreatureNumber()), 3);
+
         JLabel fpsJLabel = new JLabel("FPS");
         JTextField fpsTextField = new JTextField(Integer.toString(fps), 2);
+
         JLabel widthJLabel = new JLabel("Width");
         JTextField widthTextField = new JTextField(Integer.toString(frame.getWidth()), 3);
+
         JLabel heightJLabel = new JLabel("Height");
         JTextField heightTextField = new JTextField(Integer.toString(frame.getHeight()), 3);
+
         JButton validateButton = new JButton("Validate");
 
         configFrame.setContentPane(panel);
@@ -141,7 +148,7 @@ public class Evolutioner {
         panel.add(heightTextField);
         panel.add(validateButton);
 
-        PlainDocument creatureNumberTextFieldDocument = (PlainDocument) fpsTextField.getDocument();
+        PlainDocument creatureNumberTextFieldDocument = (PlainDocument) creatureNumberTextField.getDocument();
         PlainDocument fpsTextFieldDocument = (PlainDocument) fpsTextField.getDocument();
         PlainDocument widthTextFieldDocument = (PlainDocument) widthTextField.getDocument();
         PlainDocument heightTextFieldDocument= (PlainDocument) heightTextField.getDocument();
@@ -177,27 +184,20 @@ public class Evolutioner {
 
                 width = Integer.parseInt(widthTextField.getText());
                 int screenWidth = displayMode.getWidth();
+                if (!debug) width = width > screenWidth ? screenWidth : width;
 
-                if (!debug) {
-
-                    width = width > screenWidth ? screenWidth : width;
-
-                }
             }
 
             if (!heightTextField.getText().equals("")){
 
                 height = Integer.parseInt(heightTextField.getText());
                 int screenHeight = displayMode.getHeight();
+                if (!debug) height = height > screenHeight ? screenHeight : height;
 
-                if (!debug) {
-
-                    height = height > screenHeight ? screenHeight : height;
-
-                }
             }
 
             frame.setSize(width, height);
+
         });
 
         configFrame.setAlwaysOnTop(true);
@@ -265,11 +265,11 @@ public class Evolutioner {
     }
 
     /* Key bindings
-    & : Show up config frame.
+    & : Show up config frame
     é : Show up stats frame
-    " : Show up log frame.
-    \ : Show up debug frame.
-    g : Generate creatures.
-    h : Run Simulation.
+    " : Show up log frame
+    \ : Show up debug frame
+    g : Generate creatures
+    h : Run Simulation
     */
 }

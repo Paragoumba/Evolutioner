@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.Graphic.Display;
+import fr.paragoumba.evolutioner.graphic.Display;
 import fr.paragoumba.evolutioner.Farm;
 
 import java.awt.*;
@@ -48,7 +48,7 @@ class Node {
         
     }
 
-    private final int radius = 7;
+    public static final int radius = 7;
     int relativeX;
     int relativeY;
     private final double friction;

@@ -1,4 +1,4 @@
-package fr.paragoumba.evolutioner.Graphic;
+package fr.paragoumba.evolutioner.graphic;
 
 import fr.paragoumba.evolutioner.Evolutioner;
 
@@ -6,9 +6,7 @@ import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.image.BufferedImage;
-import java.io.File;
 import java.io.IOException;
-import java.net.URISyntaxException;
 
 public class StartingPanel extends JPanel {
 

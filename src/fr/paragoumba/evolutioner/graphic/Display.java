@@ -1,4 +1,4 @@
-package fr.paragoumba.evolutioner.Graphic;
+package fr.paragoumba.evolutioner.graphic;
 
 import fr.paragoumba.evolutioner.EntityManager;
 import fr.paragoumba.evolutioner.Evolutioner;
@@ -12,16 +12,13 @@ public class Display extends JPanel implements Runnable {
 
     public static int worldWidth;
     public static int worldHeight;
-    public static int dirtWidth;
-    public static int dirtHeight = 50;
-    public static int grassWidth;
-    public static int grassHeight = 10;
+    public static int fps = 60;
 
-    public static Color BACKGROUND_COLOR = Color.CYAN;
+    private static int dirtHeight = 50;
+    private static int grassHeight = 10;
+    private static Color BACKGROUND_COLOR = Color.CYAN;
     private static Color DIRT_COLOR = new Color(124, 44, 4);
     private static Color GRASS_COLOR = Color.GREEN;
-
-    public static int fps = 60;
     private static double lastFPSDisplay = 0;
     private static boolean running = true;
     private static int i = 0;
@@ -36,9 +33,8 @@ public class Display extends JPanel implements Runnable {
             double targetTime = (1e3 / fps);
             long start = System.currentTimeMillis();
 
-            //Run code
+            // Drawing
             repaint();
-            //
 
             long elapsed = System.currentTimeMillis() - start;
             long wait = Math.round(targetTime - elapsed);
@@ -61,13 +57,9 @@ public class Display extends JPanel implements Runnable {
 
             if (i > 59) {
 
-                i = 0;
-
-                //Correct FPS
-                //lastFPSDisplay -= 20;
-
                 Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS (" + lastFPSDisplay + "ms)");
 
+                i = 0;
                 lastFPSDisplay = 0;
 
             }
@@ -86,6 +78,7 @@ public class Display extends JPanel implements Runnable {
 
         //if (Evolutioner.debug) System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
 
+        // Drawing background
         graphics.setColor(BACKGROUND_COLOR);
         graphics.fillRect(0, 0, worldWidth, worldHeight);
 
@@ -131,14 +124,17 @@ public class Display extends JPanel implements Runnable {
         graphics.fillOval(xEyes + 10, yEyes, 5, eyesHeight);
         /* Ca nous a fait trop golri */
 
+        // Drawing dirt
         graphics.setColor(DIRT_COLOR);
-        graphics.fillRect(0, worldHeight + 10, dirtWidth, dirtHeight);
+        graphics.fillRect(0, worldHeight + 10, worldWidth, dirtHeight);
 
+        // Drawing grass.
         graphics.setColor(GRASS_COLOR);
-        graphics.fillRect(0, worldHeight, grassWidth, grassHeight);
+        graphics.fillRect(0, worldHeight, worldWidth, grassHeight);
 
-        Farm.drawCreature(graphics);
+        // Drawing Entities
         EntityManager.drawEntities(graphics);
+        Farm.drawCreature(graphics);
 
         if (Evolutioner.debug){
 
@@ -157,9 +153,6 @@ public class Display extends JPanel implements Runnable {
             graphics.drawString(y, point.x - y.length() * 10, point.y - 20);
 
         }
-
-        graphics.setColor(Color.RED);
-        graphics.drawRect(0, 0, worldWidth, worldHeight);
     }
 
     public static void setWorldSize(){
@@ -168,7 +161,6 @@ public class Display extends JPanel implements Runnable {
 
         worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
         worldHeight = Evolutioner.frame.getHeight() - dirtHeight - grassHeight - insets.top - insets.bottom;
-        dirtWidth = grassWidth = worldWidth;
 
         //System.out.println(Evolutioner.frame.getHeight() + " - " + dirtHeight + " - " + grassHeight + " - " + insets.top + " - " + insets.bottom + " = " + worldHeight);
 

@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.Graphic.Display;
+import fr.paragoumba.evolutioner.graphic.Display;
 import fr.paragoumba.evolutioner.entities.Creature;
 
 import java.awt.*;
@@ -12,7 +12,7 @@ public class Farm implements Runnable {
     public static int baseWidth;
     public static int baseHeight;
     private static Creature[] creatures = new Creature[0];
-    private static long runTime = 1000;
+    private static long runTime = 15000;
     private static int livingCreature;
     private static boolean running = false;
     private static int creatureNumber = 10;
@@ -55,17 +55,17 @@ public class Farm implements Runnable {
 
     }
 
-    public static void pauseSimulation(){
+    private static void pauseSimulation(){
 
         running = false;
 
     }
 
-    public static void stopSimulation(){
+    private static void stopSimulation(){
 
         pauseSimulation();
         killCreatures();
-        creatures = new Creature[creatureNumber];
+        creatures = new Creature[0];
 
     }
 
@@ -77,7 +77,7 @@ public class Farm implements Runnable {
 
         Evolutioner.livingCreatures.setText(livingCreatures.toString());
 
-        creatures[livingCreature].draw(graphics);
+        if (creatures[livingCreature].living) creatures[livingCreature].draw(graphics);
 
     }
 
@@ -107,8 +107,7 @@ public class Farm implements Runnable {
 
         for (int i = 0; running && i < creatures.length; ++i){
 
-            livingCreature = i;
-            creatures[i].live();
+            creatures[livingCreature = i].live();
 
             try {
 

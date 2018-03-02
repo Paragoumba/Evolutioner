@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.Graphic.Display;
+import fr.paragoumba.evolutioner.graphic.Display;
 
 import java.awt.*;
 
@@ -19,13 +19,15 @@ public class Creature extends Entity implements Runnable {
         }
     }
 
-    public boolean living = true;
+    public boolean living = false;
     private Node[] nodes;
     private Muscle[] muscles;
 
     public void live(){
 
         Thread creatureThread = new Thread(this);
+        living = true;
+
         creatureThread.start();
 
     }
@@ -34,7 +36,7 @@ public class Creature extends Entity implements Runnable {
     public void run() {
 
         //boolean extending = true;
-        long targetTime = 3;
+        long targetTime = 3; //3ms = 333fps; 200ms = 5fps
         int velocityX = 1;
         int velocityY = 1;
 
@@ -47,22 +49,20 @@ public class Creature extends Entity implements Runnable {
             //Check for Nodes with the highest X and Y
             for (Node node : nodes){
 
-                if (velocityX > 0 && node.relativeX > maxXNode.relativeX) maxXNode = node;
-                else if (velocityX < 0 && node.relativeX < maxXNode.relativeX) maxXNode = node;
+                if ((velocityX > 0 && node.relativeX > maxXNode.relativeX) || (velocityX < 0 && node.relativeX < maxXNode.relativeX)) maxXNode = node;
+                if ((velocityY > 0 && node.relativeY > maxYNode.relativeY) || (velocityY < 0 && node.relativeY < maxYNode.relativeY)) maxYNode = node;
 
-                if (velocityY > 0 && node.relativeY > maxYNode.relativeY) maxYNode = node;
-                else if (velocityY < 0 && node.relativeY < maxYNode.relativeY) maxYNode = node;
-
-                //System.out.println(maxYNode.relativeY);
+                //System.out.println(node.relativeY);
             }
 
             //Invert velocity if edge is touched
-            if (maxXNode.relativeX >= Display.worldWidth || maxXNode.relativeX <= 0) velocityX *= -1;
-            if (maxYNode.relativeY >= Display.worldHeight || maxYNode.relativeY <= 0) velocityY *= -1;
+            if (maxXNode.relativeX + Node.radius > Display.worldWidth || maxXNode.relativeX - Node.radius < 0) velocityX *= -1;
 
-            //if (Evolutioner.debug) System.out.println(velocityX + " (" + (maxXNode.relativeX >= Display.worldWidth) + " || " + (maxXNode.relativeX <= 0) + ")(" + maxXNode.relativeX + " >= " +  Display.worldWidth + " || " + maxXNode.relativeX + " <= " + 0 + ")");
+            //Set velocity to 0 if ground is touched (gravity)
+            if (maxYNode.relativeY + Node.radius > Display.worldHeight) velocityY = 0;
 
-            //if (Evolutioner.debug) System.out.println(velocityY + " (" + (maxYNode.relativeY >= Display.worldHeight) + " || " + (maxYNode.relativeY <= 0) + ")(" + maxYNode.relativeY + " >= " +  Display.worldHeight + " || " + maxYNode.relativeY + " <= " + 0 + ")");
+            //if (Evolutioner.debug) System.out.println("vx:" + velocityX + " (" + (maxXNode.relativeX >= Display.worldWidth) + " || " + (maxXNode.relativeX <= 0) + ")(" + maxXNode.relativeX + " >= " +  Display.worldWidth + " || " + maxXNode.relativeX + " <= " + 0 + ")");
+            //if (Evolutioner.debug) System.out.println("vy:" + velocityY + " (" + (maxYNode.relativeY >= Display.worldHeight) + " || " + (maxYNode.relativeY <= 0) + ")(" + maxYNode.relativeY + " >= " +  Display.worldHeight + " || " + maxYNode.relativeY + " <= " + 0 + ")");
 
             //Apply velocity to each Node
             for (Node node : nodes) {

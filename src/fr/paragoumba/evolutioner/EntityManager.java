@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.Graphic.Display;
+import fr.paragoumba.evolutioner.graphic.Display;
 import fr.paragoumba.evolutioner.entities.Entity;
 import fr.paragoumba.evolutioner.entities.Sign;
 

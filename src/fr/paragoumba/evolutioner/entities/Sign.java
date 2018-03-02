@@ -1,7 +1,7 @@
 package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Converter;
-import fr.paragoumba.evolutioner.Graphic.Display;
+import fr.paragoumba.evolutioner.graphic.Display;
 import fr.paragoumba.evolutioner.Unit;
 
 import java.awt.*;
