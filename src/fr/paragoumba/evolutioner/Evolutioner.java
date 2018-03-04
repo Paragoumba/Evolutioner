@@ -50,7 +50,7 @@ public class Evolutioner {
 
         try {
 
-            frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("res/icon30x30.png")));
+            frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("res/icon32x32.png")));
 
         } catch (IOException e) {
 
@@ -63,20 +63,21 @@ public class Evolutioner {
 
         frame.setContentPane(startingPanel);
         frame.setLocationRelativeTo(null);
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setTitle(title);
         frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
 
-        Thread.sleep(1000);
+        Thread.sleep(2000);
         /* END */
 
         /* TutorialPanel */
         TutorialPanel tutorialPanel = new TutorialPanel();
         frame.setContentPane(tutorialPanel);
         frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
 
-        Thread.sleep(1000);
+        Thread.sleep(10000);
         /* END */
 
         /* Display */
@@ -109,6 +110,7 @@ public class Evolutioner {
 
         frame.setContentPane(display);
         frame.pack();
+        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         /* END*/
 
         displayThread.start();
