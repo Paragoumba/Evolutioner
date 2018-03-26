@@ -19,7 +19,7 @@ public class TutorialPanel extends JPanel {
             g.fillRect(0, 0, Evolutioner.frame.getWidth(), Evolutioner.frame.getHeight());
 
             BufferedImage oneKey = ImageIO.read(Evolutioner.class.getResourceAsStream("res/ampersand.png"));
-            BufferedImage twoKey = ImageIO.read(Evolutioner.class.getResourceAsStream("res/eacute.png"));
+            BufferedImage twoKey = ImageIO.read(Evolutioner.class.getResourceAsStream("res/e_acute.png"));
             BufferedImage threeKey = ImageIO.read(Evolutioner.class.getResourceAsStream("res/quotation_mark.png"));
             BufferedImage fourKey = ImageIO.read(Evolutioner.class.getResourceAsStream("res/apostrophe.png"));
             BufferedImage gKey = ImageIO.read(Evolutioner.class.getResourceAsStream("res/g.png"));

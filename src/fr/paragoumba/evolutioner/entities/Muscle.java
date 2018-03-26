@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.Evolutioner;
 import fr.paragoumba.evolutioner.Farm;
 
@@ -17,11 +17,11 @@ class Muscle {
         this.relativeX1 = relativeX1;
         this.relativeY1 = relativeY1;
 
-        int bound = Display.worldWidth + 1;
+        int bound = SimulationPanel.worldWidth + 1;
 
         this.relativeX2 = random.nextInt(bound);
 
-        bound = Display.worldHeight + 1;
+        bound = SimulationPanel.worldHeight + 1;
 
         this.relativeY2 = random.nextInt(bound);
         this.extendedLength = random.nextDouble() * 50;
@@ -101,9 +101,9 @@ class Muscle {
         //Simple Line
         graphics.setColor(color);
 
-        graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight - 1, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight - 1);
-        graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight);
-        graphics.drawLine(relativeX1 * Display.worldWidth / Farm.baseWidth, relativeY1 * Display.worldHeight / Farm.baseHeight + 1, relativeX2 * Display.worldWidth / Farm.baseWidth, relativeY2 * Display.worldHeight / Farm.baseHeight + 1);
+        graphics.drawLine(relativeX1 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY1 * SimulationPanel.worldHeight / Farm.baseHeight - 1, relativeX2 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY2 * SimulationPanel.worldHeight / Farm.baseHeight - 1);
+        graphics.drawLine(relativeX1 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY1 * SimulationPanel.worldHeight / Farm.baseHeight, relativeX2 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY2 * SimulationPanel.worldHeight / Farm.baseHeight);
+        graphics.drawLine(relativeX1 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY1 * SimulationPanel.worldHeight / Farm.baseHeight + 1, relativeX2 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY2 * SimulationPanel.worldHeight / Farm.baseHeight + 1);
 
     }
 

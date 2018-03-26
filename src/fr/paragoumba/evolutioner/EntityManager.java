@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.entities.Entity;
 import fr.paragoumba.evolutioner.entities.Sign;
 
@@ -33,7 +33,7 @@ public class EntityManager {
 
     public static void setSigns(){
 
-        for (int i = 0; i <= Display.worldWidth / 250; ++i) entities.add(new Sign(250 * i));
+        for (int i = 0; i <= SimulationPanel.worldWidth / 250; ++i) entities.add(new Sign(250 * i));
 
     }
 }

@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.Farm;
 
 import java.awt.*;
@@ -11,12 +11,12 @@ class Node {
     Node() {
 
         Random random = new Random();
-        int bound = Display.worldWidth + 1;
+        int bound = SimulationPanel.worldWidth + 1;
 
         if (bound < 0) bound = 1;
 
         this.relativeX = random.nextInt(bound);
-        bound = Display.worldHeight + 1;
+        bound = SimulationPanel.worldHeight + 1;
 
         if (bound < 0) bound = 1;
 
@@ -57,7 +57,7 @@ class Node {
     public void draw(Graphics graphics){
 
         graphics.setColor(color);
-        graphics.fillArc(relativeX * Display.worldWidth / Farm.baseWidth - radius, relativeY * Display.worldHeight / Farm.baseHeight - radius, radius * 2, radius * 2, 0, 360);
+        graphics.fillArc(relativeX * SimulationPanel.worldWidth / Farm.baseWidth - radius, relativeY * SimulationPanel.worldHeight / Farm.baseHeight - radius, radius * 2, radius * 2, 0, 360);
 
     }
 

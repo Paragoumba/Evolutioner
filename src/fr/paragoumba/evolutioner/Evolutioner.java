@@ -1,34 +1,50 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.graphic.StartingPanel;
 import fr.paragoumba.evolutioner.graphic.TutorialPanel;
+import org.yaml.snakeyaml.Yaml;
 
 import javax.imageio.ImageIO;
 import javax.swing.*;
+import javax.swing.filechooser.FileSystemView;
 import javax.swing.text.PlainDocument;
 import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
+import java.io.PrintWriter;
+import java.util.Arrays;
+import java.util.HashMap;
 
-import static fr.paragoumba.evolutioner.graphic.Display.fps;
-
-public class Evolutioner {
+public class Evolutioner implements Runnable {
 
     public static boolean debug = false;
     public static final int BASE_TIME = 1;
-    public static final String version = "0.5b1";
-    public static final String title = "Evolutioner";
+    private static final String version = "0.5b1";
+    private static final String title = "Evolutioner";
     public static JFrame frame = new JFrame(title + " - " + version);
     public static JLabel livingCreatures = new JLabel("None.");
 
-    private static Display display = new Display();
-    private static Thread displayThread = new Thread(display, "Thread-Display");
+    private static Thread displayThread = new Thread(new Evolutioner(), "Thread-Graphics");
     private static Dimension oldDimension;
+    private static HashMap<Object, Object> config;
+    private static File configFile;
+    private static int fps = 60;
 
-    public static void main(String[] args) throws InterruptedException {
+    private static double lastFPSDisplay = 0;
+    private static boolean running = true;
+    private static JPanel[] panels = new JPanel[0];
+    private static int displayedPanel;
+
+    private static final int STARTING_PANEL = registerPanel(new StartingPanel());
+    private static final int TUTORIAL_PANEL = registerPanel(new TutorialPanel());
+    private static final int SIMULATION_PANEL = registerPanel(new SimulationPanel());
+
+    public static void main(String[] args) throws InterruptedException, IOException {
 
         for (String arg : args) {
 
@@ -40,58 +56,63 @@ public class Evolutioner {
             }
         }
 
+        loadConfig();
+
         //Initializing display's components
         Dimension dimension = Toolkit.getDefaultToolkit().getScreenSize();
 
         frame.setDefaultCloseOperation(WindowConstants.EXIT_ON_CLOSE);
-        frame.addWindowStateListener(e -> {if (e.getNewState() == WindowEvent.WINDOW_CLOSED) Display.stop();});
+        frame.addWindowStateListener(e -> {
+
+            if (e.getNewState() == WindowEvent.WINDOW_CLOSED) stop();
+
+        });
         frame.setPreferredSize(dimension);
         frame.setSize(dimension);
-
-        try {
-
-            frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("res/icon32x32.png")));
-
-        } catch (IOException e) {
-
-            e.printStackTrace();
-
-        }
-
-        /* StartingPanel */
-        StartingPanel startingPanel = new StartingPanel();
-
-        frame.setContentPane(startingPanel);
+        frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("res/icon32x32.png")));
         frame.setLocationRelativeTo(null);
         frame.setTitle(title);
+
+        /* StartingPanel */
+        frame.setContentPane(panels[STARTING_PANEL]);
         frame.pack();
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         frame.setVisible(true);
+        /* END */
 
         Thread.sleep(2000);
-        /* END */
 
-        /* TutorialPanel */
-        TutorialPanel tutorialPanel = new TutorialPanel();
-        frame.setContentPane(tutorialPanel);
-        frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        if ((boolean) config.get("firstVisit")) {
 
-        Thread.sleep(10000);
-        /* END */
+            PrintWriter out = new PrintWriter(configFile);
+            Yaml yaml = new Yaml();
 
-        /* Display */
+            config.put("firstVisit", false);
+            yaml.dump(config, out);
+            out.close();
+
+            /* TutorialPanel */
+            frame.setContentPane(panels[TUTORIAL_PANEL]);
+            frame.pack();
+            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+            /* END */
+
+            Thread.sleep(10000);
+
+        }
+
+        /* SimulationPanel */
         oldDimension = frame.getSize();
         InputHandler inputHandler = new InputHandler();
 
         frame.addKeyListener(inputHandler);
         frame.setFocusable(true);
-        display.addComponentListener(new ComponentAdapter() {
+        panels[displayedPanel].addComponentListener(new ComponentAdapter() {
 
             @Override
             public void componentResized(ComponentEvent e) {
 
-                Display.setWorldSize();
+                SimulationPanel.setWorldSize();
 
                 Dimension newDimension = e.getComponent().getSize();
 
@@ -103,17 +124,79 @@ public class Evolutioner {
             }
         });
 
-        Display.setWorldSize();
+        SimulationPanel.setWorldSize();
         EntityManager.setSigns();
         Farm.generateCreatures();
         Farm.startSimulation();
 
-        frame.setContentPane(display);
+        frame.setContentPane(panels[SIMULATION_PANEL]);
         frame.pack();
         frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
         /* END*/
 
         displayThread.start();
+
+    }
+
+    @Override
+    public void run() {
+
+        int i = 0;
+
+        while (running) {
+
+            double targetTime = (1e3 / fps);
+            long start = System.currentTimeMillis();
+
+            // Drawing
+            panels[displayedPanel].repaint();
+
+            long elapsed = System.currentTimeMillis() - start;
+            long wait = Math.round(targetTime - elapsed);
+
+            if (wait < 0) wait = (long) targetTime;
+
+            try {
+
+                Thread.sleep(wait);
+
+            } catch (InterruptedException e) {
+
+                e.printStackTrace();
+
+            }
+
+            ++i;
+
+            lastFPSDisplay += System.currentTimeMillis() - start;
+
+            if (i > 59) {
+
+                Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS" + (debug ? " (" + lastFPSDisplay + "ms)" : ""));
+
+                i = 0;
+                lastFPSDisplay = 0;
+
+            }
+        }
+    }
+
+    private static int registerPanel(JPanel panel){
+
+        int i = 0;
+
+        for (; i < panels.length; ++i){
+
+            if (panels[i].equals(panel)) return i;
+
+        }
+
+        for (JPanel panel1 : panels) System.out.println(panel1);
+
+        panels = Arrays.copyOf(panels, panels.length + 1);
+        panels[panels.length - 1] = panel;
+
+        return panels.length - 1;
 
     }
 
@@ -179,7 +262,8 @@ public class Evolutioner {
 
                 }
 
-                Display.fps = fps;
+                Evolutioner.fps = fps;
+
             }
 
             if (!widthTextField.getText().equals("")){
@@ -263,6 +347,45 @@ public class Evolutioner {
         logFrame.setLocationRelativeTo(null);
         logFrame.pack();
         logFrame.setVisible(true);
+
+    }
+
+    private static void loadConfig() throws IOException {
+
+        File paraCorpDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath(), "ParaCorp");
+        File configDir = new File(paraCorpDir, "Evolutioner");
+        configFile = new File(configDir, "config.yml");
+
+        Yaml yaml = new Yaml();
+
+        if (!paraCorpDir.exists()) paraCorpDir.mkdir();
+        if (!configDir.exists()) configDir.mkdir();
+
+        if (!configFile.exists()){
+
+            System.out.println(configFile.getAbsolutePath());
+
+            configFile.createNewFile();
+
+            PrintWriter out = new PrintWriter(configFile);
+            yaml.dump(yaml.load(Evolutioner.class.getResourceAsStream("config.yml")), out);
+            out.close();
+
+        }
+
+        FileInputStream fis = new FileInputStream(configFile);
+        config = (HashMap<Object, Object>) yaml.load(fis);
+
+        fis.close();
+
+        if (debug) System.out.println(config);
+
+    }
+
+    private static void stop(){
+
+        running = false;
+        Farm.killCreatures();
 
     }
 

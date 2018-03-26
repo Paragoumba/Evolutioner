@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.entities.Creature;
 
 import java.awt.*;
@@ -37,8 +37,8 @@ public class Farm implements Runnable {
 
     public static void generateCreatures(){
 
-        baseWidth = Display.worldWidth;
-        baseHeight = Display.worldHeight;
+        baseWidth = SimulationPanel.worldWidth;
+        baseHeight = SimulationPanel.worldHeight;
 
         stopSimulation();
 

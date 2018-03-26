@@ -1,7 +1,7 @@
 package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Converter;
-import fr.paragoumba.evolutioner.graphic.Display;
+import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.Unit;
 
 import java.awt.*;
@@ -27,7 +27,7 @@ public class Sign extends Entity {
     @Override
     public void draw(Graphics graphics) {
 
-        y = Display.worldHeight - height;
+        y = SimulationPanel.worldHeight - height;
 
         graphics.setColor(color);
         graphics.fillRect(x, y, width, height / 3);

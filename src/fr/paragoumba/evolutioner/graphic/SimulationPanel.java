@@ -8,70 +8,17 @@ import fr.paragoumba.evolutioner.entities.Creature;
 import javax.swing.*;
 import java.awt.*;
 
-public class Display extends JPanel implements Runnable {
+public class SimulationPanel extends JPanel {
 
     public static int worldWidth;
     public static int worldHeight;
-    public static int fps = 60;
 
     private static int dirtHeight = 50;
     private static int grassHeight = 10;
     private static Color BACKGROUND_COLOR = Color.CYAN;
     private static Color DIRT_COLOR = new Color(124, 44, 4);
     private static Color GRASS_COLOR = Color.GREEN;
-    private static double lastFPSDisplay = 0;
-    private static boolean running = true;
     private static int i = 0;
-
-    @Override
-    public void run() {
-
-        int i = 0;
-
-        while (running) {
-
-            double targetTime = (1e3 / fps);
-            long start = System.currentTimeMillis();
-
-            // Drawing
-            repaint();
-
-            long elapsed = System.currentTimeMillis() - start;
-            long wait = Math.round(targetTime - elapsed);
-
-            if (wait < 0) wait = (long) targetTime;
-
-            try {
-
-                Thread.sleep(wait);
-
-            } catch (InterruptedException e) {
-
-                e.printStackTrace();
-
-            }
-
-            ++i;
-
-            lastFPSDisplay += System.currentTimeMillis() - start;
-
-            if (i > 59) {
-
-                Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS (" + lastFPSDisplay + "ms)");
-
-                i = 0;
-                lastFPSDisplay = 0;
-
-            }
-        }
-    }
-
-    public static void stop(){
-
-        running = false;
-        Farm.killCreatures();
-
-    }
 
     @Override
     public void paintComponent(Graphics graphics) {
@@ -92,13 +39,13 @@ public class Display extends JPanel implements Runnable {
         graphics.drawArc(75 + 20, 75 + 20 + 2, 60, 60, -20, -140);
 
         int eyesYDistance = 30 * worldHeight / 811;
-        int nodesYDistance = Display.worldHeight;
+        int nodesYDistance = SimulationPanel.worldHeight;
         Creature firstCreature = Farm.get1stCreature();
         int averageYNode = firstCreature != null ? firstCreature.getAverageY() : 0;
         int yEyes = (75 + 50 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
 
         int eyesXDistance = 30 * worldWidth / 1600;
-        int nodesXDistance = Display.worldWidth;
+        int nodesXDistance = SimulationPanel.worldWidth;
         int averageXNode = firstCreature != null ? firstCreature.getAverageX() : 0;
         int xEyes = (75 + 50 + averageXNode * eyesXDistance / nodesXDistance);
 
