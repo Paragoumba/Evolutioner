@@ -15,33 +15,33 @@ class Node {
 
         if (bound < 0) bound = 1;
 
-        this.relativeX = random.nextInt(bound);
+        this.x = random.nextInt(bound);
         bound = SimulationPanel.worldHeight + 1;
 
         if (bound < 0) bound = 1;
 
-        this.relativeY = random.nextInt(bound);
+        this.y = random.nextInt(bound);
         this.friction = random.nextDouble();
 
         initColor();
 
     }
 
-    Node(int relativeX, int relativeY) {
+    Node(int x, int y) {
 
         Random random = new Random();
-        this.relativeX = relativeX;
-        this.relativeY = relativeY;
+        this.x = x;
+        this.y = y;
         this.friction = random.nextDouble();
 
         initColor();
 
     }
     
-    Node(int relativeX, int relativeY, double friction) {
+    Node(int x, int y, double friction) {
         
-        this.relativeX = relativeX;
-        this.relativeY = relativeY;
+        this.x = x;
+        this.y = y;
         this.friction = friction;
 
         initColor();
@@ -49,22 +49,25 @@ class Node {
     }
 
     public static final int radius = 7;
-    int relativeX;
-    int relativeY;
+    int x;
+    int y;
     private final double friction;
     private Color color;
 
     public void draw(Graphics graphics){
 
-        graphics.setColor(color);
-        graphics.fillArc(relativeX * SimulationPanel.worldWidth / Farm.baseWidth - radius, relativeY * SimulationPanel.worldHeight / Farm.baseHeight - radius, radius * 2, radius * 2, 0, 360);
+        if (SimulationPanel.isOnScreen(x, y)) {
 
+            graphics.setColor(color);
+            graphics.fillArc(x * SimulationPanel.worldWidth / Farm.baseWidth - radius - SimulationPanel.getCameraX(), y * SimulationPanel.worldHeight / Farm.baseHeight - radius, radius * 2, radius * 2, 0, 360);
+
+        }
     }
 
     public void updateCoords(Dimension oldDimension, Dimension newDimension){
 
-        relativeX = relativeX * newDimension.width / oldDimension.width;
-        relativeY = relativeY * newDimension.height / oldDimension.height;
+        x = x * newDimension.width / oldDimension.width;
+        y = y * newDimension.height / oldDimension.height;
 
     }
 

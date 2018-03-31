@@ -1,14 +1,13 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.Converter;
 import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.Unit;
+import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.awt.*;
 
-/**
- * Created by Paragoumba on 28/01/2018.
- */
+import static fr.paragoumba.evolutioner.Unit.METER;
+import static fr.paragoumba.evolutioner.Unit.PIXEL;
 
 public class Sign extends Entity {
 
@@ -27,17 +26,20 @@ public class Sign extends Entity {
     @Override
     public void draw(Graphics graphics) {
 
-        y = SimulationPanel.worldHeight - height;
+        if (SimulationPanel.isOnScreen(x, y) || SimulationPanel.isOnScreen(x + width, y)) {
 
-        graphics.setColor(color);
-        graphics.fillRect(x, y, width, height / 3);
-        graphics.fillRect(x + width / 3, y + height / 3, width / 3, height / 3 * 2);
+            y = SimulationPanel.worldHeight - height;
 
-        //if (Evolutioner.debug) System.out.println(x + ";" + Converter.convert(Unit.PIXEL, Unit.METER, x));
+            graphics.setColor(color);
+            graphics.fillRect(x - SimulationPanel.getCameraX() - width / 2, y, width, height / 3);
+            graphics.fillRect(x + width / 3 - SimulationPanel.getCameraX() - width / 2, y + height / 3, width / 3, height / 3 * 2);
 
-        graphics.setColor(Color.BLACK);
-        graphics.drawString(Converter.convert(Unit.PIXEL, Unit.METER, x + 1) + "m", x + width / 4 / 3, y + height / 3 / 4 + 10);
+            graphics.setColor(Color.BLACK);
+            graphics.drawString(getMeters() + "m", x + width / 4 / 3 - SimulationPanel.getCameraX() - width / 2, y + height / 3 / 4 + 10);
 
+            //System.out.println();
+
+        }
     }
 
     @Override
@@ -47,6 +49,18 @@ public class Sign extends Entity {
         y = y * newDimension.height / oldDimension.height;
         width = width * newDimension.width / oldDimension.width;
         height = height * newDimension.height / oldDimension.height;
+
+    }
+
+    public int getDistance(){
+
+        return x;
+
+    }
+
+    public int getMeters(){
+
+        return x / 250;
 
     }
 }

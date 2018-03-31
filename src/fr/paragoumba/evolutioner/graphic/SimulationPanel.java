@@ -12,6 +12,8 @@ public class SimulationPanel extends JPanel {
 
     public static int worldWidth;
     public static int worldHeight;
+    public static int screenWidth;
+    public static int screenHeight;
 
     private static int dirtHeight = 50;
     private static int grassHeight = 10;
@@ -19,56 +21,63 @@ public class SimulationPanel extends JPanel {
     private static Color DIRT_COLOR = new Color(124, 44, 4);
     private static Color GRASS_COLOR = Color.GREEN;
     private static int i = 0;
+    private static int cameraX = 0;
+    private static float cameraScale = 1;
 
     @Override
     public void paintComponent(Graphics graphics) {
 
-        //if (Evolutioner.debug) System.out.println(Evolutioner.frame.getWidth() + "x" + Evolutioner.frame.getHeight());
+        graphics.drawLine(-5, -5, -10, -10);
 
         // Drawing background
         graphics.setColor(BACKGROUND_COLOR);
-        graphics.fillRect(0, 0, worldWidth, worldHeight);
+        graphics.fillRect(0, 0, screenWidth, screenHeight);
 
         /* #Teleboubizes */
-        graphics.setColor(Color.YELLOW);
-        graphics.fillOval(75, 75, 100, 100);
+        if (Evolutioner.debug) {
 
-        graphics.setColor(Color.BLACK);
-        graphics.drawArc(75 + 20, 75 + 20, 60, 60, -20, -140);
-        graphics.drawArc(75 + 20, 75 + 20 + 1, 60, 60, -20, -140);
-        graphics.drawArc(75 + 20, 75 + 20 + 2, 60, 60, -20, -140);
+            graphics.setColor(Color.YELLOW);
+            graphics.fillOval(75, 75, 100, 100);
 
-        int eyesYDistance = 30 * worldHeight / 811;
-        int nodesYDistance = SimulationPanel.worldHeight;
-        Creature firstCreature = Farm.get1stCreature();
-        int averageYNode = firstCreature != null ? firstCreature.getAverageY() : 0;
-        int yEyes = (75 + 50 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
+            graphics.setColor(Color.BLACK);
+            graphics.drawArc(75 + 20, 75 + 20, 60, 60, -20, -140);
+            graphics.drawArc(75 + 20, 75 + 20 + 1, 60, 60, -20, -140);
+            graphics.drawArc(75 + 20, 75 + 20 + 2, 60, 60, -20, -140);
 
-        int eyesXDistance = 30 * worldWidth / 1600;
-        int nodesXDistance = SimulationPanel.worldWidth;
-        int averageXNode = firstCreature != null ? firstCreature.getAverageX() : 0;
-        int xEyes = (75 + 50 + averageXNode * eyesXDistance / nodesXDistance);
+            int eyesYDistance = 30 * worldHeight / 811;
+            int nodesYDistance = SimulationPanel.worldHeight;
+            Creature livingCreature = Farm.getLivingCreature();
+            int averageYNode = livingCreature != null ? livingCreature.getAverageY() : 0;
+            int yEyes = (75 + 50 - 20 - 10 + averageYNode * eyesYDistance / nodesYDistance);
 
-        // Makes the sun blinks his eyes
-        int eyesHeight = 5;
+            int eyesXDistance = 30 * worldWidth / 1600;
+            int nodesXDistance = SimulationPanel.worldWidth;
+            int averageXNode = livingCreature != null ? livingCreature.getAverageX() : 0;
+            int xEyes = (75 + 50 + averageXNode * eyesXDistance / nodesXDistance);
 
-        if (i >= 620){
+            // Makes the sun blinks his eyes
+            int eyesHeight = 5;
 
-            eyesHeight = 2;
-            yEyes -= 5 - 2;
+            if (i >= 620) {
+
+                eyesHeight = 2;
+                yEyes += 5 - eyesHeight;
+
+            }
+
+            if (i >= 640) {
+
+                i = 0;
+
+            }
+
+            ++i;
+            //
+
+            graphics.fillOval(xEyes - 10, yEyes, 5, eyesHeight);
+            graphics.fillOval(xEyes + 10, yEyes, 5, eyesHeight);
 
         }
-        if (i >= 640){
-
-            i = 0;
-
-        }
-
-        ++i;
-        //
-
-        graphics.fillOval(xEyes - 10, yEyes, 5, eyesHeight);
-        graphics.fillOval(xEyes + 10, yEyes, 5, eyesHeight);
         /* Ca nous a fait trop golri */
 
         // Drawing dirt
@@ -86,18 +95,18 @@ public class SimulationPanel extends JPanel {
         if (Evolutioner.debug){
 
             // Displays location of mouse around it
-            Point point = MouseInfo.getPointerInfo().getLocation();
+            Point mouseLoc = MouseInfo.getPointerInfo().getLocation();
             Point frame = Evolutioner.frame.getLocation();
             Insets insets = Evolutioner.frame.getInsets();
 
-            point.translate(frame.x - insets.left, frame.y);
+            mouseLoc.translate(frame.x - insets.left, frame.y);
 
-            String x = point.x + "x";
-            String y = point.y + "y";
+            String x = mouseLoc.x + SimulationPanel.getCameraX() + "x";
+            String y = mouseLoc.y + "y";
 
             graphics.setColor(Color.GRAY);
-            graphics.drawString(x, point.x, point.y - 35);
-            graphics.drawString(y, point.x - y.length() * 10, point.y - 20);
+            graphics.drawString(x, mouseLoc.x, mouseLoc.y - 35);
+            graphics.drawString(y, mouseLoc.x - y.length() * 10, mouseLoc.y - 20);
 
         }
     }
@@ -106,10 +115,40 @@ public class SimulationPanel extends JPanel {
 
         Insets insets = Evolutioner.frame.getInsets();
 
-        worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
-        worldHeight = Evolutioner.frame.getHeight() - dirtHeight - grassHeight - insets.top - insets.bottom;
+        screenWidth = worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
+        screenHeight = Evolutioner.frame.getHeight() - insets.top - insets.bottom;
+        worldHeight = screenHeight - dirtHeight - grassHeight;
 
-        //System.out.println(Evolutioner.frame.getHeight() + " - " + dirtHeight + " - " + grassHeight + " - " + insets.top + " - " + insets.bottom + " = " + worldHeight);
+    }
+
+    public static int getCameraX() {
+
+        return cameraX;
+
+    }
+
+    public static void setCameraX(int x){
+
+        cameraX = x;
+        EntityManager.setSigns();
+
+    }
+
+    public static float getCameraScale() {
+
+        return cameraScale;
+
+    }
+
+    public static void setCameraScale(float scale){
+
+        cameraScale = scale;
+
+    }
+
+    public static boolean isOnScreen(int x, int y){
+
+        return x >= cameraX && x <= x + screenWidth * cameraScale && y <= y + screenHeight * cameraScale;
 
     }
 }

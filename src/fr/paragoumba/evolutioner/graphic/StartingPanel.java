@@ -18,7 +18,7 @@ public class StartingPanel extends JPanel {
             g.setColor(Color.BLACK);
             g.fillRect(0, 0, Evolutioner.frame.getWidth(), Evolutioner.frame.getHeight());
 
-            BufferedImage startImage = ImageIO.read(Evolutioner.class.getResourceAsStream("res/startImage.png"));
+            BufferedImage startImage = ImageIO.read(Evolutioner.class.getResourceAsStream("resources/startImage.png"));
             g.drawImage(startImage, Evolutioner.frame.getWidth() / 2 - 512 / 2, Evolutioner.frame.getHeight() / 2 - 768 / 2, null);
 
         } catch (IOException e) {

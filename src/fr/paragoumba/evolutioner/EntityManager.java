@@ -33,7 +33,9 @@ public class EntityManager {
 
     public static void setSigns(){
 
-        for (int i = 0; i <= SimulationPanel.worldWidth / 250; ++i) entities.add(new Sign(250 * i));
+        entities = new ArrayList<>();
+
+        for (int i = SimulationPanel.getCameraX() / 250; i < (SimulationPanel.worldWidth + SimulationPanel.getCameraX()) * SimulationPanel.getCameraScale() / 250; ++i) entities.add(new Sign(250 * i));
 
     }
 }

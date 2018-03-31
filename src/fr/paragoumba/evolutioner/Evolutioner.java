@@ -1,8 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.graphic.SimulationPanel;
-import fr.paragoumba.evolutioner.graphic.StartingPanel;
-import fr.paragoumba.evolutioner.graphic.TutorialPanel;
+import fr.paragoumba.evolutioner.graphic.*;
 import org.yaml.snakeyaml.Yaml;
 
 import javax.imageio.ImageIO;
@@ -13,10 +11,7 @@ import java.awt.*;
 import java.awt.event.ComponentAdapter;
 import java.awt.event.ComponentEvent;
 import java.awt.event.WindowEvent;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.Arrays;
 import java.util.HashMap;
 
@@ -28,8 +23,11 @@ public class Evolutioner implements Runnable {
     private static final String title = "Evolutioner";
     public static JFrame frame = new JFrame(title + " - " + version);
     public static JLabel livingCreatures = new JLabel("None.");
+    public static int displayedPanel;
 
-    private static Thread displayThread = new Thread(new Evolutioner(), "Thread-Graphics");
+    private static boolean waiting = false;
+
+    private static Thread displayThread = new Thread(new Evolutioner(), "Thread-Display");
     private static Dimension oldDimension;
     private static HashMap<Object, Object> config;
     private static File configFile;
@@ -38,11 +36,11 @@ public class Evolutioner implements Runnable {
     private static double lastFPSDisplay = 0;
     private static boolean running = true;
     private static JPanel[] panels = new JPanel[0];
-    private static int displayedPanel;
 
-    private static final int STARTING_PANEL = registerPanel(new StartingPanel());
-    private static final int TUTORIAL_PANEL = registerPanel(new TutorialPanel());
-    private static final int SIMULATION_PANEL = registerPanel(new SimulationPanel());
+    public static final int STARTING_PANEL = registerPanel(new StartingPanel());
+    public static final int TUTORIAL_PANEL = registerPanel(new TutorialPanel());
+    public static final int MENU_PANEL = registerPanel(new MenuPanel());
+    public static final int SIMULATION_PANEL = registerPanel(new SimulationPanel());
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
@@ -69,45 +67,57 @@ public class Evolutioner implements Runnable {
         });
         frame.setPreferredSize(dimension);
         frame.setSize(dimension);
-        frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("res/icon32x32.png")));
+        frame.setIconImage(ImageIO.read(Evolutioner.class.getResourceAsStream("resources/icon32x32.png")));
         frame.setLocationRelativeTo(null);
         frame.setTitle(title);
 
         /* StartingPanel */
-        frame.setContentPane(panels[STARTING_PANEL]);
+        frame.setContentPane(panels[displayedPanel = STARTING_PANEL]);
         frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
+        if (frame.getState() != JFrame.ICONIFIED) if (frame.getState() != JFrame.ICONIFIED) frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        
         frame.setVisible(true);
         /* END */
 
-        Thread.sleep(2000);
+        long sleepStart = System.currentTimeMillis();
+        while (displayedPanel == STARTING_PANEL && System.currentTimeMillis() - sleepStart < 2000) Thread.sleep(1);
 
-        if ((boolean) config.get("firstVisit")) {
+        InputHandler inputHandler = new InputHandler();
+        frame.addKeyListener(inputHandler);
 
-            PrintWriter out = new PrintWriter(configFile);
-            Yaml yaml = new Yaml();
+        if ((boolean) config.get("firstVisit") || (config.get("forceTutorial") != null && (boolean) config.get("forceTutorial"))) {
+
+            waiting = true;
 
             config.put("firstVisit", false);
-            yaml.dump(config, out);
-            out.close();
+            saveConfig();
 
             /* TutorialPanel */
-            frame.setContentPane(panels[TUTORIAL_PANEL]);
+            frame.setContentPane(panels[displayedPanel = TUTORIAL_PANEL]);
             frame.pack();
-            frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
+            if (frame.getState() != JFrame.ICONIFIED) frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
             /* END */
 
-            Thread.sleep(10000);
+            waitUntilInput();
 
         }
 
+        /* MenuPanel */
+
+        frame.setContentPane(panels[displayedPanel = MENU_PANEL]);
+        frame.pack();
+
+        //waitUntilInput();
+
+        /* END */
+
         /* SimulationPanel */
         oldDimension = frame.getSize();
-        InputHandler inputHandler = new InputHandler();
 
-        frame.addKeyListener(inputHandler);
         frame.setFocusable(true);
-        panels[displayedPanel].addComponentListener(new ComponentAdapter() {
+        panels[SIMULATION_PANEL].addComponentListener(new ComponentAdapter() {
 
             @Override
             public void componentResized(ComponentEvent e) {
@@ -129,10 +139,11 @@ public class Evolutioner implements Runnable {
         Farm.generateCreatures();
         Farm.startSimulation();
 
-        frame.setContentPane(panels[SIMULATION_PANEL]);
+        frame.setContentPane(panels[displayedPanel = SIMULATION_PANEL]);
         frame.pack();
-        frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        /* END*/
+
+        if (frame.getState() != JFrame.ICONIFIED) frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+        /* END */
 
         displayThread.start();
 
@@ -172,7 +183,7 @@ public class Evolutioner implements Runnable {
 
             if (i > 59) {
 
-                Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d/lastFPSDisplay * 1E3 * 60) + "FPS" + (debug ? " (" + lastFPSDisplay + "ms)" : ""));
+                Evolutioner.frame.setTitle(Evolutioner.title + " - " + Math.round(1d / lastFPSDisplay * 1E3 * 60) + "FPS" + (debug ? " (" + lastFPSDisplay + "ms)" : ""));
 
                 i = 0;
                 lastFPSDisplay = 0;
@@ -181,17 +192,53 @@ public class Evolutioner implements Runnable {
         }
     }
 
-    private static int registerPanel(JPanel panel){
+    static void loadConfig() throws IOException {
 
-        int i = 0;
+        File paraCorpDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath(), "ParaCorp");
+        File configDir = new File(paraCorpDir, "Evolutioner");
+        configFile = new File(configDir, "config.yml");
 
-        for (; i < panels.length; ++i){
+        Yaml yaml = new Yaml();
 
-            if (panels[i].equals(panel)) return i;
+        if (!paraCorpDir.exists()) paraCorpDir.mkdir();
+        if (!configDir.exists()) configDir.mkdir();
+
+        if (!configFile.exists()){
+
+            if (debug) System.out.println("Creating config file.");
+
+            System.out.println(configFile.getAbsolutePath());
+
+            configFile.createNewFile();
+
+            PrintWriter out = new PrintWriter(configFile);
+            yaml.dump(yaml.load(Evolutioner.class.getResourceAsStream("config.yml")), out);
+            out.close();
 
         }
 
-        for (JPanel panel1 : panels) System.out.println(panel1);
+        FileInputStream fis = new FileInputStream(configFile);
+        config = (HashMap<Object, Object>) yaml.load(fis);
+
+        fis.close();
+
+        if (debug) System.out.println(config);
+
+    }
+
+    static void saveConfig() throws FileNotFoundException {
+
+        PrintWriter out = new PrintWriter(configFile);
+        Yaml yaml = new Yaml();
+
+        yaml.dump(config, out);
+        out.close();
+
+    }
+
+    private static int registerPanel(JPanel panel){
+
+        for (int i = 0; i < panels.length; ++i) if (panels[i].equals(panel)) return i;
 
         panels = Arrays.copyOf(panels, panels.length + 1);
         panels[panels.length - 1] = panel;
@@ -217,7 +264,10 @@ public class Evolutioner implements Runnable {
         JLabel heightJLabel = new JLabel("Height");
         JTextField heightTextField = new JTextField(Integer.toString(frame.getHeight()), 3);
 
+        JCheckBox tutorialCheckBox = new JCheckBox("Show tutorial", config.containsKey("forceTutorial") && (boolean) config.get("forceTutorial"));
         JButton validateButton = new JButton("Validate");
+
+        JGroup test = new JGroup(0, 0, 200, 200);
 
         configFrame.setContentPane(panel);
         configFrame.setResizable(false);
@@ -231,7 +281,9 @@ public class Evolutioner implements Runnable {
         panel.add(widthTextField);
         panel.add(heightJLabel);
         panel.add(heightTextField);
+        panel.add(tutorialCheckBox);
         panel.add(validateButton);
+        panel.add(test);
 
         PlainDocument creatureNumberTextFieldDocument = (PlainDocument) creatureNumberTextField.getDocument();
         PlainDocument fpsTextFieldDocument = (PlainDocument) fpsTextField.getDocument();
@@ -283,7 +335,17 @@ public class Evolutioner implements Runnable {
             }
 
             frame.setSize(width, height);
+            config.put("forceTutorial", tutorialCheckBox.isSelected());
 
+            try {
+
+                saveConfig();
+
+            } catch (FileNotFoundException e1) {
+
+                e1.printStackTrace();
+
+            }
         });
 
         configFrame.setAlwaysOnTop(true);
@@ -350,39 +412,32 @@ public class Evolutioner implements Runnable {
 
     }
 
-    private static void loadConfig() throws IOException {
+    public static void setWaiting(boolean waiting) {
 
-        File paraCorpDir = new File(FileSystemView.getFileSystemView().getDefaultDirectory().getAbsolutePath(), "ParaCorp");
-        File configDir = new File(paraCorpDir, "Evolutioner");
-        configFile = new File(configDir, "config.yml");
-
-        Yaml yaml = new Yaml();
-
-        if (!paraCorpDir.exists()) paraCorpDir.mkdir();
-        if (!configDir.exists()) configDir.mkdir();
-
-        if (!configFile.exists()){
-
-            System.out.println(configFile.getAbsolutePath());
-
-            configFile.createNewFile();
-
-            PrintWriter out = new PrintWriter(configFile);
-            yaml.dump(yaml.load(Evolutioner.class.getResourceAsStream("config.yml")), out);
-            out.close();
-
-        }
-
-        FileInputStream fis = new FileInputStream(configFile);
-        config = (HashMap<Object, Object>) yaml.load(fis);
-
-        fis.close();
-
-        if (debug) System.out.println(config);
+        Evolutioner.waiting = waiting;
 
     }
 
-    private static void stop(){
+    private static void waitUntilInput(){
+
+        while (waiting) {
+
+            try {
+
+                Thread.sleep(10);
+
+            } catch (InterruptedException e) {
+
+                e.printStackTrace();
+
+            }
+        }
+
+        waiting = true;
+
+    }
+
+    public static void stop(){
 
         running = false;
         Farm.killCreatures();

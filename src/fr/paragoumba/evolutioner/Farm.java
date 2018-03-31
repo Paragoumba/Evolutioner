@@ -16,6 +16,7 @@ public class Farm implements Runnable {
     private static int livingCreature;
     private static boolean running = false;
     private static int creatureNumber = 10;
+    private static final Thread livingThread = new Thread(new Farm(), "Thread - LifeCycle");
 
     public static void setDefaultCreatureNumber(int creatureNumber){
 
@@ -48,22 +49,22 @@ public class Farm implements Runnable {
 
     }
 
-    public static void startSimulation(){
+    public static void toggleSimulation(){
 
-        Thread livingThread = new Thread(new Farm(), "Thread - LifeCycle");
-        livingThread.start();
+        if (livingThread.isAlive()) stopSimulation();
+        else startSimulation();
 
     }
 
-    private static void pauseSimulation(){
+    public static void startSimulation(){
 
-        running = false;
+        livingThread.start();
 
     }
 
     private static void stopSimulation(){
 
-        pauseSimulation();
+        running = false;
         killCreatures();
         creatures = new Creature[0];
 
@@ -77,13 +78,13 @@ public class Farm implements Runnable {
 
         Evolutioner.livingCreatures.setText(livingCreatures.toString());
 
-        if (creatures[livingCreature].living) creatures[livingCreature].draw(graphics);
+        if (creatures.length > 0 && creatures[livingCreature].living) creatures[livingCreature].draw(graphics);
 
     }
 
-    public static Creature get1stCreature(){
+    public static Creature getLivingCreature(){
 
-        return creatures.length > 0 ? creatures[0] : null;
+        return creatures.length > 0 ? creatures[livingCreature] : null;
 
     }
 
@@ -106,6 +107,8 @@ public class Farm implements Runnable {
         long runTime = Farm.runTime;
 
         for (int i = 0; running && i < creatures.length; ++i){
+
+            System.out.println(i);
 
             creatures[livingCreature = i].live();
 

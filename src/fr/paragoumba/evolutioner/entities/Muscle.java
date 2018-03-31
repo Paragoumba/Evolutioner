@@ -9,21 +9,21 @@ import java.util.Random;
 
 class Muscle {
     
-    Muscle(int relativeX1, int relativeY1) {
+    Muscle(int x1, int y1) {
 
         Random random = new Random();
         double ratio = random.nextDouble() * Evolutioner.BASE_TIME;
 
-        this.relativeX1 = relativeX1;
-        this.relativeY1 = relativeY1;
+        this.x1 = x1;
+        this.y1 = y1;
 
         int bound = SimulationPanel.worldWidth + 1;
 
-        this.relativeX2 = random.nextInt(bound);
+        this.x2 = random.nextInt(bound);
 
         bound = SimulationPanel.worldHeight + 1;
 
-        this.relativeY2 = random.nextInt(bound);
+        this.y2 = random.nextInt(bound);
         this.extendedLength = random.nextDouble() * 50;
         this.contractedLength = random.nextDouble() * extendedLength;
         this.extendedTime = ratio;
@@ -34,15 +34,15 @@ class Muscle {
 
     }
 
-    Muscle(int relativeX1, int relativeY1, int relativeX2, int relativeY2) {
+    Muscle(int x1, int y1, int x2, int y2) {
 
         Random random = new Random();
         double ratio = random.nextDouble() * Evolutioner.BASE_TIME;
 
-        this.relativeX1 = relativeX1;
-        this.relativeY1 = relativeY1;
-        this.relativeX2 = relativeX2;
-        this.relativeY2 = relativeY2;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
         this.extendedLength = random.nextDouble() * 50;
         this.contractedLength = random.nextDouble() * extendedLength;
         this.extendedTime = ratio;
@@ -53,12 +53,12 @@ class Muscle {
 
     }
 
-    Muscle(int relativeX1, int relativeY1, int relativeX2, int relativeY2, double extendedLength, double contractedLength, double extendedTime, double contractedTime, double strength) {
+    Muscle(int x1, int y1, int x2, int y2, double extendedLength, double contractedLength, double extendedTime, double contractedTime, double strength) {
 
-        this.relativeX1 = relativeX1;
-        this.relativeY1 = relativeY1;
-        this.relativeX2 = relativeX2;
-        this.relativeY2 = relativeY2;
+        this.x1 = x1;
+        this.y1 = y1;
+        this.x2 = x2;
+        this.y2 = y2;
         this.extendedLength = extendedLength;
         this.contractedLength = contractedLength;
         this.extendedTime = extendedTime;
@@ -69,10 +69,10 @@ class Muscle {
 
     }
 
-    int relativeX1;
-    int relativeY1;
-    int relativeX2;
-    int relativeY2;
+    int x1;
+    int y1;
+    int x2;
+    int y2;
     private double extendedLength;
     private double contractedLength;
     private double extendedTime;
@@ -82,37 +82,40 @@ class Muscle {
 
     public void draw(Graphics graphics){
 
-        /*int slope = (relativeY2 - relativeY1) / (relativeX2 - relativeX1);
-        int y0 = relativeY1 - relativeX1 * slope;
+        /*int slope = (y2 - y1) / (x2 - x1);
+        int y0 = y1 - x1 * slope;
 
         int ;
 
-        int relativeX1L = 0;
-        int relativeX1R = 0;
-        int relativeX2L = 0;
-        int relativeX2R = 0;
-        int relativeY1L = 0;
-        int relativeY1R = 0;
-        int relativeY2L = 0;
-        int relativeY2R = 0;
+        int x1L = 0;
+        int x1R = 0;
+        int x2L = 0;
+        int x2R = 0;
+        int y1L = 0;
+        int y1R = 0;
+        int y2L = 0;
+        int y2R = 0;
 
-        graphics.fillPolygon(new int[]{relativeX1L, relativeX2L, relativeX2R, relativeX1R}, new int[]{relativeX1L, relativeX2L, relativeX2R, relativeX1R}, 4);*/
+        graphics.fillPolygon(new int[]{x1L, x2L, x2R, x1R}, new int[]{x1L, x2L, x2R, x1R}, 4);*/
 
-        //Simple Line
-        graphics.setColor(color);
+        if (SimulationPanel.isOnScreen(x1, y1) || SimulationPanel.isOnScreen(x2, y2)) {
 
-        graphics.drawLine(relativeX1 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY1 * SimulationPanel.worldHeight / Farm.baseHeight - 1, relativeX2 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY2 * SimulationPanel.worldHeight / Farm.baseHeight - 1);
-        graphics.drawLine(relativeX1 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY1 * SimulationPanel.worldHeight / Farm.baseHeight, relativeX2 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY2 * SimulationPanel.worldHeight / Farm.baseHeight);
-        graphics.drawLine(relativeX1 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY1 * SimulationPanel.worldHeight / Farm.baseHeight + 1, relativeX2 * SimulationPanel.worldWidth / Farm.baseWidth, relativeY2 * SimulationPanel.worldHeight / Farm.baseHeight + 1);
+            //Simple Line
+            graphics.setColor(color);
 
+            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight - 1, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight - 1);
+            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight);
+            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight + 1, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight + 1);
+        
+        }
     }
 
     public void updateCoords(Dimension oldDimension, Dimension newDimension){
 
-        relativeX1 = relativeX1 * newDimension.width / oldDimension.width;
-        relativeY1 = relativeY1 * newDimension.height / oldDimension.height;
-        relativeX2 = relativeX2 * newDimension.width / oldDimension.width;
-        relativeY2 = relativeY2 * newDimension.height / oldDimension.height;
+        x1 = x1 * newDimension.width / oldDimension.width;
+        y1 = y1 * newDimension.height / oldDimension.height;
+        x2 = x2 * newDimension.width / oldDimension.width;
+        y2 = y2 * newDimension.height / oldDimension.height;
 
     }
 
