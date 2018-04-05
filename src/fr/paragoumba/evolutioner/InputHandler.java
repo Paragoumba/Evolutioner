@@ -2,10 +2,13 @@ package fr.paragoumba.evolutioner;
 
 import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 
+import java.awt.*;
 import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 
 public class InputHandler implements KeyListener {
+
+    private String something = "";
 
     @Override
     public void keyTyped(KeyEvent e) {}
@@ -23,6 +26,24 @@ public class InputHandler implements KeyListener {
         }
 
         if (Evolutioner.displayedPanel == Evolutioner.SIMULATION_PANEL){
+
+            something += e.getKeyChar();
+
+            if (something.equals("readyplayerone")){
+
+                SimulationPanel.BACKGROUND_COLOR = invertColor(SimulationPanel.BACKGROUND_COLOR);
+                SimulationPanel.GRASS_COLOR = invertColor(SimulationPanel.GRASS_COLOR);
+                SimulationPanel.DIRT_COLOR = invertColor(SimulationPanel.DIRT_COLOR);
+                SimulationPanel.SUN_COLOR = invertColor(SimulationPanel.SUN_COLOR);
+                SimulationPanel.SUN_2ND_COLOR = invertColor(SimulationPanel.SUN_2ND_COLOR);
+
+                something = "";
+
+            } else if (!"readyplayerone".startsWith(something)){
+
+                something = "";
+
+            }
 
             if (keyCode == KeyEvent.VK_AMPERSAND) {
 
@@ -48,13 +69,29 @@ public class InputHandler implements KeyListener {
 
                 Farm.toggleSimulation();
 
+            } else if (keyCode == KeyEvent.VK_UP){
+
+                SimulationPanel.setCameraY(SimulationPanel.getCameraY() - 5);
+
             } else if (keyCode == KeyEvent.VK_RIGHT){
 
                 SimulationPanel.setCameraX(SimulationPanel.getCameraX() + 5);
 
+            } else if (keyCode == KeyEvent.VK_DOWN){
+
+                SimulationPanel.setCameraY(SimulationPanel.getCameraY() + 5);
+
             } else if (keyCode == KeyEvent.VK_LEFT){
 
                 SimulationPanel.setCameraX(SimulationPanel.getCameraX() - 5);
+
+            } else if (keyCode == KeyEvent.VK_ADD){
+
+                SimulationPanel.setCameraScale(SimulationPanel.getCameraX() + 0.1f);
+
+            } else if (keyCode == KeyEvent.VK_SUBTRACT){
+
+                SimulationPanel.setCameraScale(SimulationPanel.getCameraX() - 0.1f);
 
             }
 
@@ -72,4 +109,9 @@ public class InputHandler implements KeyListener {
     @Override
     public void keyReleased(KeyEvent e) {}
 
+    private Color invertColor(Color color){
+
+        return new Color(255 - color.getRed(), 255 - color.getGreen(), 255 - color.getBlue(), color.getAlpha());
+
+    }
 }

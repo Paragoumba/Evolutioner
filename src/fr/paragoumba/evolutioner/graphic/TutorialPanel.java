@@ -14,7 +14,9 @@ import java.io.IOException;
 
 public class TutorialPanel extends JPanel {
 
-    private final String[] lines = {"I didn't thought you needed tutorial", ""};
+    private final String[] lines = {"I didn't thought you needed a tutorial", "Evolution is a blind and random process", "Science wins"};
+
+    private final String line = getRandomString();
 
     private JTextPane oneKeyTip = new JTextPane();
     private JTextPane twoKeyTip = new JTextPane();
@@ -101,10 +103,13 @@ public class TutorialPanel extends JPanel {
 
             Graphics2D g2d = (Graphics2D) g;
             AffineTransform orig = g2d.getTransform();
+            Font baseFont = g2d.getFont();
 
-            g2d.rotate(Math.PI / 3);
-            g2d.drawString(getRandomString(), 1000, 100);
+            g2d.rotate(Math.PI / 6);
+            g2d.setFont(new Font("arial", Font.BOLD, 20));
+            g2d.drawString(line, 900, -400);
             g2d.setTransform(orig);
+            g2d.setFont(baseFont);
 
             g.drawString("Press 'Enter' to pass", Evolutioner.frame.getWidth() - 155, Evolutioner.frame.getHeight() - 45);
             g.drawLine(Evolutioner.frame.getWidth() - 154, lineY, Evolutioner.frame.getWidth() - 27, lineY);
@@ -118,7 +123,11 @@ public class TutorialPanel extends JPanel {
 
     private String getRandomString(){
 
-        return lines[(int) (Math.random() * lines.length)];
+        int i = (int) Math.round(Math.random() * (lines.length - 1));
+
+        System.out.println(lines[i]);
+
+        return lines[i];
 
     }
 }

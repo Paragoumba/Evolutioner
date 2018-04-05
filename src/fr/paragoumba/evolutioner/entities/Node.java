@@ -51,6 +51,8 @@ class Node {
     public static final int radius = 7;
     int x;
     int y;
+    int velocityX = 0;
+    int velocityY = 0;
     private final double friction;
     private Color color;
 

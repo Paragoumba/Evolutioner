@@ -12,7 +12,7 @@ public class Farm implements Runnable {
     public static int baseWidth;
     public static int baseHeight;
     private static Creature[] creatures = new Creature[0];
-    private static long runTime = 15000;
+    private static long runTime = 150000;
     private static int livingCreature;
     private static boolean running = false;
     private static int creatureNumber = 10;

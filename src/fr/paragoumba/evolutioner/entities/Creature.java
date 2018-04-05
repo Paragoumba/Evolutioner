@@ -8,13 +8,17 @@ public class Creature extends Entity implements Runnable {
 
     public Creature(int nodeNumber){
 
+        double alpha = 0;
+
         nodes = new Node[nodeNumber];
         muscles = new Muscle[nodeNumber];
 
         for (int i = 0; i < nodeNumber; ++i){
 
-            nodes[i] = i == 0 ? new Node() : new Node(muscles[i - 1].x2, muscles[i - 1].y2);
-            muscles[i] = i == nodeNumber - 1 ? new Muscle(nodes[i].x, nodes[i].y, nodes[0].x, nodes[0].y) : new Muscle(nodes[i].x, nodes[i].y);
+            alpha = i == 0 ? Math.random() * 2 * Math.PI : alpha + Math.PI / 3;
+
+            nodes[i] = i == 0 ? new Node() : new Node((int) Math.round(nodes[i - 1].x + muscles[i - 1].extendedLength * Math.cos(alpha)), (int) Math.round(nodes[i - 1].y + muscles[i - 1].extendedLength * Math.sin(alpha)));
+            muscles[i] = new Muscle();
 
         }
     }
@@ -40,46 +44,22 @@ public class Creature extends Entity implements Runnable {
 
         //boolean extending = true;
         long targetTime = 17; //3ms = 333fps; 200ms = 5fps
-        int velocityX = 1;
-        int velocityY = 1;
 
         while (living) {
-
-            //Run code
-            //Node maxXNode = new Node(SimulationPanel.worldWidth / 2, 0);
-            Node maxYNode = new Node(SimulationPanel.worldHeight / 2, 0);
-
-            //Check for Nodes with the highest X and Y
-            for (Node node : nodes){
-
-                //if ((velocityX > 0 && node.x > maxXNode.x) || (velocityX < 0 && node.x < maxXNode.x)) maxXNode = node;
-                if (velocityY > 0 && node.y > maxYNode.y) maxYNode = node;
-
-                //System.out.println(node.y);
-            }
 
             //Invert velocity if edge is touched
             //if (maxXNode.x + Node.radius > SimulationPanel.worldWidth || maxXNode.x - Node.radius < 0) velocityX *= -1;
 
-            //Set velocity to 0 if ground is touched (gravity)
-            if (maxYNode.y + Node.radius > SimulationPanel.worldHeight) velocityY = 0;
-
             //Apply velocity to each Node
             for (Node node : nodes) {
                 
-                node.x += velocityX;
-                node.y += velocityY;
+                node.x += node.velocityX;
+                node.y += node.velocityY;
+                
+                //Set velocity to 0 if ground is touched (gravity)
+                if (node.y + Node.radius > SimulationPanel.worldHeight) node.velocityY = 0;
+                else node.velocityY = 1;
             
-            }
-
-            //Apply velocity to each Muscle
-            for (Muscle muscle : muscles) {
-
-                muscle.x1 += velocityX;
-                muscle.x2 += velocityX;
-                muscle.y1 += velocityY;
-                muscle.y2 += velocityY;
-
             }
 
             try {
@@ -97,7 +77,7 @@ public class Creature extends Entity implements Runnable {
     @Override
     public void draw(Graphics graphics){
 
-        for (Muscle muscle : muscles) muscle.draw(graphics);
+        for (int i = 0; i < muscles.length; ++i) muscles[i].draw(graphics, nodes[i].x, nodes[i].y, nodes[i < muscles.length - 1 ? i + 1 : 0].x, nodes[i < muscles.length - 1 ? i + 1 : 0].y);
         for (Node node : nodes) node.draw(graphics);
 
     }
@@ -105,7 +85,6 @@ public class Creature extends Entity implements Runnable {
     public void updateCoords(Dimension oldDimension, Dimension newDimension){
 
         for (Node node : nodes) node.updateCoords(oldDimension, newDimension);
-        for (Muscle muscle : muscles) muscle.updateCoords(oldDimension, newDimension);
 
     }
 

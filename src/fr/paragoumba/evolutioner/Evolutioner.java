@@ -35,7 +35,7 @@ public class Evolutioner implements Runnable {
 
     private static double lastFPSDisplay = 0;
     private static boolean running = true;
-    private static JPanel[] panels = new JPanel[0];
+    private static JPanel[] panels = {};
 
     public static final int STARTING_PANEL = registerPanel(new StartingPanel());
     public static final int TUTORIAL_PANEL = registerPanel(new TutorialPanel());
@@ -81,9 +81,11 @@ public class Evolutioner implements Runnable {
         /* END */
 
         long sleepStart = System.currentTimeMillis();
+
         while (displayedPanel == STARTING_PANEL && System.currentTimeMillis() - sleepStart < 2000) Thread.sleep(1);
 
         InputHandler inputHandler = new InputHandler();
+
         frame.addKeyListener(inputHandler);
 
         if ((boolean) config.get("firstVisit") || (config.get("forceTutorial") != null && (boolean) config.get("forceTutorial"))) {

@@ -17,11 +17,14 @@ public class SimulationPanel extends JPanel {
 
     private static int dirtHeight = 50;
     private static int grassHeight = 10;
-    private static Color BACKGROUND_COLOR = Color.CYAN;
-    private static Color DIRT_COLOR = new Color(124, 44, 4);
-    private static Color GRASS_COLOR = Color.GREEN;
+    public static Color BACKGROUND_COLOR = Color.CYAN;
+    public static Color DIRT_COLOR = new Color(124, 44, 4);
+    public static Color GRASS_COLOR = Color.GREEN;
+    public static Color SUN_COLOR = Color.YELLOW;
+    public static Color SUN_2ND_COLOR = Color.BLACK;
     private static int i = 0;
     private static int cameraX = 0;
+    private static int cameraY = 0;
     private static float cameraScale = 1;
 
     @Override
@@ -36,10 +39,10 @@ public class SimulationPanel extends JPanel {
         /* #Teleboubizes */
         if (Evolutioner.debug) {
 
-            graphics.setColor(Color.YELLOW);
+            graphics.setColor(SUN_COLOR);
             graphics.fillOval(75, 75, 100, 100);
 
-            graphics.setColor(Color.BLACK);
+            graphics.setColor(SUN_2ND_COLOR);
             graphics.drawArc(75 + 20, 75 + 20, 60, 60, -20, -140);
             graphics.drawArc(75 + 20, 75 + 20 + 1, 60, 60, -20, -140);
             graphics.drawArc(75 + 20, 75 + 20 + 2, 60, 60, -20, -140);
@@ -84,7 +87,7 @@ public class SimulationPanel extends JPanel {
         graphics.setColor(DIRT_COLOR);
         graphics.fillRect(0, worldHeight + 10, worldWidth, dirtHeight);
 
-        // Drawing grass.
+        // Drawing grass
         graphics.setColor(GRASS_COLOR);
         graphics.fillRect(0, worldHeight, worldWidth, grassHeight);
 
@@ -102,7 +105,7 @@ public class SimulationPanel extends JPanel {
             mouseLoc.translate(frame.x - insets.left, frame.y);
 
             String x = mouseLoc.x + SimulationPanel.getCameraX() + "x";
-            String y = mouseLoc.y + "y";
+            String y = mouseLoc.y + SimulationPanel.getCameraY() + "y";
 
             graphics.setColor(Color.GRAY);
             graphics.drawString(x, mouseLoc.x, mouseLoc.y - 35);
@@ -134,6 +137,18 @@ public class SimulationPanel extends JPanel {
 
     }
 
+    public static int getCameraY() {
+
+        return cameraY;
+
+    }
+
+    public static void setCameraY(int cameraY) {
+
+        if (cameraY >= 0 && cameraY + screenHeight * cameraScale <= screenHeight) SimulationPanel.cameraY = cameraY;
+
+    }
+
     public static float getCameraScale() {
 
         return cameraScale;
@@ -142,13 +157,13 @@ public class SimulationPanel extends JPanel {
 
     public static void setCameraScale(float scale){
 
-        cameraScale = scale;
+        cameraScale = scale >= 0 ? scale <= 1 ? scale : 1 : 0;
 
     }
 
     public static boolean isOnScreen(int x, int y){
 
-        return x >= cameraX && x <= x + screenWidth * cameraScale && y <= y + screenHeight * cameraScale;
+        return x >= cameraX && x <= x + screenWidth * cameraScale && y >= cameraY && y <= y + screenHeight * cameraScale;
 
     }
 }

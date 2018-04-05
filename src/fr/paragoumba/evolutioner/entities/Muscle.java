@@ -9,22 +9,12 @@ import java.util.Random;
 
 class Muscle {
     
-    Muscle(int x1, int y1) {
+    Muscle() {
 
         Random random = new Random();
         double ratio = random.nextDouble() * Evolutioner.BASE_TIME;
 
-        this.x1 = x1;
-        this.y1 = y1;
-
-        int bound = SimulationPanel.worldWidth + 1;
-
-        this.x2 = random.nextInt(bound);
-
-        bound = SimulationPanel.worldHeight + 1;
-
-        this.y2 = random.nextInt(bound);
-        this.extendedLength = random.nextDouble() * 50;
+        this.extendedLength = random.nextDouble() * SimulationPanel.screenHeight / 3 * 2;
         this.contractedLength = random.nextDouble() * extendedLength;
         this.extendedTime = ratio;
         this.contractedTime = 1 - ratio;
@@ -34,31 +24,8 @@ class Muscle {
 
     }
 
-    Muscle(int x1, int y1, int x2, int y2) {
+    Muscle(double extendedLength, double contractedLength, double extendedTime, double contractedTime, double strength) {
 
-        Random random = new Random();
-        double ratio = random.nextDouble() * Evolutioner.BASE_TIME;
-
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-        this.extendedLength = random.nextDouble() * 50;
-        this.contractedLength = random.nextDouble() * extendedLength;
-        this.extendedTime = ratio;
-        this.contractedTime = 1 - ratio;
-        this.strength = random.nextDouble();
-
-        initColor();
-
-    }
-
-    Muscle(int x1, int y1, int x2, int y2, double extendedLength, double contractedLength, double extendedTime, double contractedTime, double strength) {
-
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
         this.extendedLength = extendedLength;
         this.contractedLength = contractedLength;
         this.extendedTime = extendedTime;
@@ -69,18 +36,14 @@ class Muscle {
 
     }
 
-    int x1;
-    int y1;
-    int x2;
-    int y2;
-    private double extendedLength;
-    private double contractedLength;
+    double extendedLength;
+    double contractedLength;
     private double extendedTime;
     private double contractedTime;
     private double strength;
     private Color color;
 
-    public void draw(Graphics graphics){
+    public void draw(Graphics graphics, int x1, int y1, int x2, int y2){
 
         /*int slope = (y2 - y1) / (x2 - x1);
         int y0 = y1 - x1 * slope;
@@ -108,15 +71,6 @@ class Muscle {
             graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight + 1, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight + 1);
         
         }
-    }
-
-    public void updateCoords(Dimension oldDimension, Dimension newDimension){
-
-        x1 = x1 * newDimension.width / oldDimension.width;
-        y1 = y1 * newDimension.height / oldDimension.height;
-        x2 = x2 * newDimension.width / oldDimension.width;
-        y2 = y2 * newDimension.height / oldDimension.height;
-
     }
 
     private void initColor(){

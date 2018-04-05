@@ -26,7 +26,7 @@ public class Sign extends Entity {
     @Override
     public void draw(Graphics graphics) {
 
-        if (SimulationPanel.isOnScreen(x, y) || SimulationPanel.isOnScreen(x + width, y)) {
+        if (SimulationPanel.isOnScreen(x - width / 2, y) || SimulationPanel.isOnScreen(x + width / 2, y)) {
 
             y = SimulationPanel.worldHeight - height;
 
@@ -37,18 +37,16 @@ public class Sign extends Entity {
             graphics.setColor(Color.BLACK);
             graphics.drawString(getMeters() + "m", x + width / 4 / 3 - SimulationPanel.getCameraX() - width / 2, y + height / 3 / 4 + 10);
 
-            //System.out.println();
-
         }
     }
 
     @Override
     public void updateCoords(Dimension oldDimension, Dimension newDimension) {
 
-        x = x * newDimension.width / oldDimension.width;
-        y = y * newDimension.height / oldDimension.height;
-        width = width * newDimension.width / oldDimension.width;
-        height = height * newDimension.height / oldDimension.height;
+        x *= newDimension.width / oldDimension.width;
+        y *= newDimension.height / oldDimension.height;
+        width *= newDimension.width / oldDimension.width;
+        height *= newDimension.height / oldDimension.height;
 
     }
 
