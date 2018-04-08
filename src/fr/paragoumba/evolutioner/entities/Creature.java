@@ -13,19 +13,21 @@ public class Creature extends Entity implements Runnable {
         nodes = new Node[nodeNumber];
         muscles = new Muscle[nodeNumber];
 
-        for (int i = 0; i < nodeNumber; ++i){
+        for (int i = 0; i < nodeNumber + 1; ++i){
 
             alpha = i == 0 ? Math.random() * 2 * Math.PI : alpha + Math.PI / 3;
 
-            nodes[i] = i == 0 ? new Node() : new Node((int) Math.round(nodes[i - 1].x + muscles[i - 1].extendedLength * Math.cos(alpha)), (int) Math.round(nodes[i - 1].y + muscles[i - 1].extendedLength * Math.sin(alpha)));
-            muscles[i] = new Muscle();
+            int j = i < muscles.length - 1 ? i + 1 : 0;
+
+            if (i < nodeNumber + 1) nodes[i] = i == 0 ? new Node() : new Node((int) Math.round(nodes[i - 1].x + muscles[i - 1].length * Math.cos(alpha)), (int) Math.round(nodes[i - 1].y + muscles[i - 1].length * Math.sin(alpha)));
+            if (i > 0) muscles[i - 1] = new Muscle(nodes[i - 1].x, nodes[i - 1].y, nodes[j - 1].x, nodes[j - 1].y);
 
         }
     }
 
     public boolean living = false;
-    private final Node[] nodes;
-    private final Muscle[] muscles;
+    final Node[] nodes;
+    final Muscle[] muscles;
     private final Thread creatureThread = new Thread(this);
 
     public void live(){
@@ -77,7 +79,7 @@ public class Creature extends Entity implements Runnable {
     @Override
     public void draw(Graphics graphics){
 
-        for (int i = 0; i < muscles.length; ++i) muscles[i].draw(graphics, nodes[i].x, nodes[i].y, nodes[i < muscles.length - 1 ? i + 1 : 0].x, nodes[i < muscles.length - 1 ? i + 1 : 0].y);
+        for (int i = 0; i < muscles.length; ++i) muscles[i].draw(graphics);
         for (Node node : nodes) node.draw(graphics);
 
     }
