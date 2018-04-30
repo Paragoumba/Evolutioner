@@ -23,60 +23,55 @@ class Node {
         this.y = random.nextInt(bound);
         this.friction = random.nextDouble();
 
-        initColor();
+        color = initColor();
 
     }
 
-    Node(int x, int y) {
+    Node(int previousNodeX, int previousNodeY, double extendedLength) {
 
-        Random random = new Random();
-        this.x = x;
-        this.y = y;
-        this.friction = random.nextDouble();
+        x = previousNodeX + (int) Math.round(extendedLength * Math.cos(Math.PI / 3));
+        y = previousNodeY + (int) Math.round(extendedLength * Math.sin(Math.PI / 3));
+        this.friction = Math.random();
 
-        initColor();
+        color = initColor();
 
     }
-    
-    Node(int x, int y, double friction) {
-        
-        this.x = x;
-        this.y = y;
-        this.friction = friction;
 
-        initColor();
-        
-    }
-
-    public static final int radius = 7;
+    private static final int radius = 7;
     int x;
     int y;
     int velocityX = 0;
-    int velocityY = 0;
+    int velocityY = 1;
     private final double friction;
-    private Color color;
+    private final Color color;
 
-    public void draw(Graphics graphics){
+    void draw(Graphics graphics){
 
         if (SimulationPanel.isOnScreen(x, y)) {
 
             graphics.setColor(color);
-            graphics.fillArc(x * SimulationPanel.worldWidth / Farm.baseWidth - radius - SimulationPanel.getCameraX(), y * SimulationPanel.worldHeight / Farm.baseHeight - radius, radius * 2, radius * 2, 0, 360);
+            graphics.fillArc(x * SimulationPanel.worldWidth / Farm.baseWidth - radius - SimulationPanel.getCameraX(), y * SimulationPanel.worldHeight / Farm.baseHeight - radius - SimulationPanel.getCameraY(), radius * 2, radius * 2, 0, 360);
 
         }
     }
 
-    public void updateCoords(Dimension oldDimension, Dimension newDimension){
+    void updateCoords(Dimension oldDimension, Dimension newDimension){
 
         x = x * newDimension.width / oldDimension.width;
         y = y * newDimension.height / oldDimension.height;
 
     }
 
-    private void initColor(){
+    boolean isOnGround(){
+
+        return y + radius >= SimulationPanel.worldHeight;
+
+    }
+
+    private Color initColor(){
 
         int rgb = (int) (friction * 255);
-        color = new Color(rgb, rgb, rgb);
+        return new Color(rgb, rgb, rgb);
 
     }
 }

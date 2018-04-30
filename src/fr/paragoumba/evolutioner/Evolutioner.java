@@ -1,5 +1,6 @@
 package fr.paragoumba.evolutioner;
 
+import fr.paragoumba.evolutioner.Utils.DocumentFilter;
 import fr.paragoumba.evolutioner.graphic.*;
 import org.yaml.snakeyaml.Yaml;
 
@@ -18,12 +19,12 @@ import java.util.HashMap;
 public class Evolutioner implements Runnable {
 
     public static boolean debug = false;
-    public static final int BASE_TIME = 1;
     private static final String version = "0.5b1";
     private static final String title = "Evolutioner";
     public static JFrame frame = new JFrame(title + " - " + version);
-    public static JLabel livingCreatures = new JLabel("None.");
-    public static int displayedPanel;
+
+    static JLabel livingCreatures = new JLabel("None.");
+    static int displayedPanel;
 
     private static boolean waiting = false;
 
@@ -37,10 +38,10 @@ public class Evolutioner implements Runnable {
     private static boolean running = true;
     private static JPanel[] panels = {};
 
-    public static final int STARTING_PANEL = registerPanel(new StartingPanel());
-    public static final int TUTORIAL_PANEL = registerPanel(new TutorialPanel());
-    public static final int MENU_PANEL = registerPanel(new MenuPanel());
-    public static final int SIMULATION_PANEL = registerPanel(new SimulationPanel());
+    private static final int STARTING_PANEL = registerPanel(new StartingPanel());
+    static final int TUTORIAL_PANEL = registerPanel(new TutorialPanel());
+    static final int MENU_PANEL = registerPanel(new MenuPanel());
+    static final int SIMULATION_PANEL = registerPanel(new SimulationPanel());
 
     public static void main(String[] args) throws InterruptedException, IOException {
 
@@ -74,9 +75,9 @@ public class Evolutioner implements Runnable {
         /* StartingPanel */
         frame.setContentPane(panels[displayedPanel = STARTING_PANEL]);
         frame.pack();
-        
-        if (frame.getState() != JFrame.ICONIFIED) if (frame.getState() != JFrame.ICONIFIED) frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
-        
+
+        if (frame.getState() != JFrame.ICONIFIED) frame.setExtendedState(JFrame.MAXIMIZED_BOTH);
+
         frame.setVisible(true);
         /* END */
 
@@ -88,7 +89,7 @@ public class Evolutioner implements Runnable {
 
         frame.addKeyListener(inputHandler);
 
-        if ((boolean) config.get("firstVisit") || (config.get("forceTutorial") != null && (boolean) config.get("forceTutorial"))) {
+        if ((config.get("firstVisit") != null && (boolean) config.get("firstVisit")) || (config.get("forceTutorial") != null && (boolean) config.get("forceTutorial"))) {
 
             waiting = true;
 
@@ -107,12 +108,9 @@ public class Evolutioner implements Runnable {
         }
 
         /* MenuPanel */
-
-        frame.setContentPane(panels[displayedPanel = MENU_PANEL]);
-        frame.pack();
-
+        //frame.setContentPane(panels[displayedPanel = MENU_PANEL]);
+        //frame.pack();
         //waitUntilInput();
-
         /* END */
 
         /* SimulationPanel */
@@ -209,8 +207,6 @@ public class Evolutioner implements Runnable {
 
             if (debug) System.out.println("Creating config file.");
 
-            System.out.println(configFile.getAbsolutePath());
-
             configFile.createNewFile();
 
             PrintWriter out = new PrintWriter(configFile);
@@ -228,7 +224,7 @@ public class Evolutioner implements Runnable {
 
     }
 
-    static void saveConfig() throws FileNotFoundException {
+    private static void saveConfig() throws FileNotFoundException {
 
         PrintWriter out = new PrintWriter(configFile);
         Yaml yaml = new Yaml();

@@ -1,26 +1,18 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.graphic.SimulationPanel;
-
 import java.awt.*;
 
 public class Creature extends Entity implements Runnable {
 
-    public Creature(int nodeNumber){
-
-        double alpha = 0;
+    public Creature(int index, int nodeNumber){
 
         nodes = new Node[nodeNumber];
         muscles = new Muscle[nodeNumber];
 
-        for (int i = 0; i < nodeNumber + 1; ++i){
+        for (int i = 0; i < nodeNumber; ++i){
 
-            alpha = i == 0 ? Math.random() * 2 * Math.PI : alpha + Math.PI / 3;
-
-            int j = i < muscles.length - 1 ? i + 1 : 0;
-
-            if (i < nodeNumber + 1) nodes[i] = i == 0 ? new Node() : new Node((int) Math.round(nodes[i - 1].x + muscles[i - 1].length * Math.cos(alpha)), (int) Math.round(nodes[i - 1].y + muscles[i - 1].length * Math.sin(alpha)));
-            if (i > 0) muscles[i - 1] = new Muscle(nodes[i - 1].x, nodes[i - 1].y, nodes[j - 1].x, nodes[j - 1].y);
+            nodes[i] = i == 0 ? new Node() : new Node(index, i - 1, muscles[i - 1].extendedLength);
+            muscles[i] = i == nodeNumber - 1 ? new Muscle(index, i, 0) : new Muscle(index, i, i + 1);
 
         }
     }
@@ -32,39 +24,80 @@ public class Creature extends Entity implements Runnable {
 
     public void live(){
 
-        System.out.println(creatureThread.isAlive());
+        if (!creatureThread.isAlive()) creatureThread.start();
 
-        if (!creatureThread.isAlive()){
-            creatureThread.start();
-        }
     }
 
     @Override
     public void run() {
 
         living = true;
-
-        //boolean extending = true;
-        long targetTime = 17; //3ms = 333fps; 200ms = 5fps
+        long targetTime = 17; //3ms = 333fps; 200ms = 5fps; 17ms = ~60fps
 
         while (living) {
 
-            //Invert velocity if edge is touched
-            //if (maxXNode.x + Node.radius > SimulationPanel.worldWidth || maxXNode.x - Node.radius < 0) velocityX *= -1;
-
             //Apply velocity to each Node
             for (Node node : nodes) {
-                
+
                 node.x += node.velocityX;
                 node.y += node.velocityY;
-                
+
                 //Set velocity to 0 if ground is touched (gravity)
-                if (node.y + Node.radius > SimulationPanel.worldHeight) node.velocityY = 0;
+                if (node.isOnGround()) node.velocityY = 0;
                 else node.velocityY = 1;
-            
+
             }
 
             try {
+
+                for (Muscle muscle : muscles){
+
+                    System.out.println(muscle.isContracting + ":" + muscle.contractedLength + ":"+ muscle.extendedLength);
+
+                    Node previousNode = muscle.getPreviousNode();
+                    Node nextNode = muscle.getNextNode();
+
+                    double addedLength = muscle.isContracting ? (muscle.extendedLength - muscle.contractedLength) / muscle.contractedTime : (muscle.contractedLength - muscle.extendedLength) / muscle.extendedTime;
+                    long start = System.currentTimeMillis();
+
+                    System.out.println("added" + addedLength);
+
+                    while (System.currentTimeMillis() - start < (muscle.isContracting ? muscle.contractedTime : muscle.extendedTime)){
+
+                        double cos = addedLength * Math.cos(muscle.getOrientedAngle());
+                        double sin = addedLength * Math.sin(muscle.getOrientedAngle());
+
+                        if (previousNode.x < nextNode.x){
+
+                            previousNode.x += cos;
+                            nextNode.x -= cos;
+
+                        } else {
+
+                            previousNode.x -= cos;
+                            nextNode.x += cos;
+
+                        }
+
+                        if (previousNode.y < nextNode.y){
+
+                            previousNode.y += sin;
+                            nextNode.y -= sin;
+
+                        } else {
+
+                            previousNode.y -= sin;
+                            nextNode.y += sin;
+
+                        }
+
+                        Thread.sleep(1);
+
+                    }
+
+                    muscle.toggleContraction();
+
+                }
 
                 Thread.sleep(targetTime);
 
@@ -79,7 +112,7 @@ public class Creature extends Entity implements Runnable {
     @Override
     public void draw(Graphics graphics){
 
-        for (int i = 0; i < muscles.length; ++i) muscles[i].draw(graphics);
+        for (Muscle muscle : muscles) muscle.draw(graphics);
         for (Node node : nodes) node.draw(graphics);
 
     }

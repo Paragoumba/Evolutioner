@@ -45,7 +45,13 @@ public class Farm implements Runnable {
 
         creatures = new Creature[creatureNumber];
 
-        for (int i = 0; i < creatureNumber; ++i) creatures[i] = new Creature(3);
+        for (int i = 0; i < creatureNumber; ++i) creatures[i] = new Creature(i, 3);
+
+    }
+
+    public static Creature getCreature(int index){
+
+        return creatures[index];
 
     }
 
@@ -107,8 +113,6 @@ public class Farm implements Runnable {
         long runTime = Farm.runTime;
 
         for (int i = 0; running && i < creatures.length; ++i){
-
-            System.out.println(i);
 
             creatures[livingCreature = i].live();
 

@@ -1,4 +1,4 @@
-package fr.paragoumba.evolutioner;
+package fr.paragoumba.evolutioner.Utils;
 
 import javax.swing.text.AttributeSet;
 import javax.swing.text.BadLocationException;

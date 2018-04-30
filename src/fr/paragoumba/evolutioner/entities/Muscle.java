@@ -1,114 +1,107 @@
 package fr.paragoumba.evolutioner.entities;
 
-import fr.paragoumba.evolutioner.Evolutioner;
 import fr.paragoumba.evolutioner.Farm;
+import fr.paragoumba.evolutioner.Utils.Vector2D;
 import fr.paragoumba.evolutioner.graphic.SimulationPanel;
-import fr.paragoumba.evolutioner.graphic.Vector2D;
 
 import java.awt.*;
 import java.util.Random;
 
 class Muscle {
-    
-    Muscle(int x1, int y1, int x2, int y2) {
 
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-
-        muscleVector = new Vector2D(x2 - x1, y2 - y1);
+    Muscle(int creatureIndex, int previousNodeIndex, int nextNodeIndex) {
 
         Random random = new Random();
-        double ratio = random.nextDouble() * Evolutioner.BASE_TIME;
+        double ratio = random.nextDouble() * BASE_TIME;
 
-        this.extendedLength = random.nextDouble() * SimulationPanel.screenHeight / 3 * 2;
+        this.creatureIndex = creatureIndex;
+        this.previousNodeIndex = previousNodeIndex;
+        this.nextNodeIndex = nextNodeIndex;
+        this.extendedLength = random.nextDouble() * 50;
         this.contractedLength = random.nextDouble() * extendedLength;
         this.extendedTime = ratio;
-        this.contractedTime = 1 - ratio;
+        this.contractedTime = BASE_TIME - ratio;
         this.strength = random.nextDouble();
 
-        initColor();
+        color = initColor();
 
     }
 
-    Muscle(int x1, int y1, int x2, int y2, double extendedLength, double contractedLength, double extendedTime, double contractedTime, double strength) {
+    Muscle(int creatureIndex, int previousNodeIndex, int nextNodeIndex, double extendedLength, double contractedLength, double extendedTime, double contractedTime, double strength) {
 
-        this.x1 = x1;
-        this.y1 = y1;
-        this.x2 = x2;
-        this.y2 = y2;
-
-        muscleVector = new Vector2D(x2 - x1, y2 - y1);
-
+        this.creatureIndex = creatureIndex;
+        this.previousNodeIndex = previousNodeIndex;
+        this.nextNodeIndex = nextNodeIndex;
         this.extendedLength = extendedLength;
         this.contractedLength = contractedLength;
         this.extendedTime = extendedTime;
         this.contractedTime = contractedTime;
         this.strength = strength;
 
-        initColor();
+        color = initColor();
 
     }
 
-    double length;
+    private static final int BASE_TIME = 1000;
 
-    private final double extendedLength;
-    private final double contractedLength;
+    private final int creatureIndex;
+    private final int previousNodeIndex;
+    private final int nextNodeIndex;
+    final double extendedLength;
+    final double contractedLength;
+    final double extendedTime;
+    final double contractedTime;
+    final double strength;
+    private final Color color;
+    boolean isContracting = true;
 
-    private int x1;
-    private int y1;
-    private int x2;
-    private int y2;
-    private Vector2D muscleVector;
-    private double extendedTime;
-    private double contractedTime;
-    private double strength;
-    private Color color;
+    void draw(Graphics graphics){
 
-    public void draw(Graphics graphics){
+        graphics.setColor(color);
 
-        if (SimulationPanel.isOnScreen(x1, y1) || SimulationPanel.isOnScreen(x2, y2)) {
+        int x1 = Farm.getCreature(creatureIndex).nodes[previousNodeIndex].x;
+        int y1 = Farm.getCreature(creatureIndex).nodes[previousNodeIndex].y;
+        int x2 = Farm.getCreature(creatureIndex).nodes[nextNodeIndex].x;
+        int y2 = Farm.getCreature(creatureIndex).nodes[nextNodeIndex].y;
 
-            /*//Simple Line
-            graphics.setColor(color);
+        if (SimulationPanel.isOnScreen(x1, y1) || SimulationPanel.isOnScreen(x2, y2)){
 
-            int n = 4;
-            int[] pointX = new int[n];
-            int[] pointY = new int[n];
+            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight - 1 - SimulationPanel.getCameraY(), x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight - 1 - SimulationPanel.getCameraY());
+            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight - SimulationPanel.getCameraY(), x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight - SimulationPanel.getCameraY());
+            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight + 1 - SimulationPanel.getCameraY(), x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight + 1 - SimulationPanel.getCameraY());
 
-            double theta = muscleVector.getAngle() + Math.PI / 2;
-            Vector2D vec = new Vector2D((int) Math.round(Math.cos(theta) * length), (int) Math.round(Math.sin(theta) * length));
-
-            pointX[0] = ;
-            pointY[0] = ;
-            pointX[1] = ;
-            pointY[1] = ;
-            pointX[2] = ;
-            pointY[2] = ;
-            pointX[3] = ;
-            pointY[3] = ;
-
-            for (int i = 0; i < n; ++i){
-
-                pointX[i] = vec.x;
-                pointY[i] = vec.y;
-
-            }
-
-            graphics.fillPolygon(pointX, pointY, n);*/
-
-            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight - 1, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight - 1);
-            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight);
-            graphics.drawLine(x1 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y1 * SimulationPanel.worldHeight / Farm.baseHeight + 1, x2 * SimulationPanel.worldWidth / Farm.baseWidth - SimulationPanel.getCameraX(), y2 * SimulationPanel.worldHeight / Farm.baseHeight + 1);
-        
         }
     }
+    
+    Node getPreviousNode(){
+        
+        return Farm.getCreature(creatureIndex).nodes[previousNodeIndex];
+        
+    }
+    
+    Node getNextNode(){
+        
+        return Farm.getCreature(creatureIndex).nodes[nextNodeIndex];
+        
+    }
 
-    private void initColor(){
+    void toggleContraction(){
+
+        isContracting = !isContracting;
+
+    }
+
+    double getOrientedAngle(){
+
+        Vector2D vec = new Vector2D(Farm.getCreature(creatureIndex).nodes[previousNodeIndex].x - Farm.getCreature(creatureIndex).nodes[nextNodeIndex].x, Farm.getCreature(creatureIndex).nodes[previousNodeIndex].y - Farm.getCreature(creatureIndex).nodes[nextNodeIndex].y);
+        return vec.getOrientedAngle();
+
+    }
+
+    private Color initColor(){
 
         int ratio = (int) (strength * (50 + 1));
-        color = new Color(255, ratio, ratio);
+        return new Color(255, ratio, ratio);
 
     }
 }

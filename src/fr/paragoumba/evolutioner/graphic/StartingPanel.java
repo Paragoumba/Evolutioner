@@ -1,7 +1,5 @@
 package fr.paragoumba.evolutioner.graphic;
 
-import fr.paragoumba.evolutioner.Evolutioner;
-
 import javax.imageio.ImageIO;
 import javax.swing.*;
 import java.awt.*;
@@ -13,18 +11,20 @@ public class StartingPanel extends JPanel {
     @Override
     protected void paintComponent(Graphics g) {
 
+        g.setColor(Color.black);
+        g.fillRect(0,0,SimulationPanel.frameWidth,SimulationPanel.frameHeight);
+
         try {
 
-            g.setColor(Color.BLACK);
-            g.fillRect(0, 0, Evolutioner.frame.getWidth(), Evolutioner.frame.getHeight());
-
-            BufferedImage startImage = ImageIO.read(Evolutioner.class.getResourceAsStream("resources/startImage.png"));
-            g.drawImage(startImage, Evolutioner.frame.getWidth() / 2 - 512 / 2, Evolutioner.frame.getHeight() / 2 - 768 / 2, null);
+            BufferedImage darwin = ImageIO.read(StartingPanel.class.getResource("../resources/startImage.png"));
+            g.drawImage(darwin,SimulationPanel.frameWidth/2-darwin.getWidth()/2,SimulationPanel.frameHeight/2-darwin.getHeight()/2,null);
 
         } catch (IOException e) {
-
             e.printStackTrace();
-
         }
+
+
+
+
     }
 }

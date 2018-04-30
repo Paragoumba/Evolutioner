@@ -10,10 +10,16 @@ import java.awt.*;
 
 public class SimulationPanel extends JPanel {
 
+    public SimulationPanel(){
+
+        setWorldSize();
+
+    }
+
+    public static int frameWidth;
+    public static int frameHeight;
     public static int worldWidth;
     public static int worldHeight;
-    public static int screenWidth;
-    public static int screenHeight;
 
     private static int dirtHeight = 50;
     private static int grassHeight = 10;
@@ -34,7 +40,7 @@ public class SimulationPanel extends JPanel {
 
         // Drawing background
         graphics.setColor(BACKGROUND_COLOR);
-        graphics.fillRect(0, 0, screenWidth, screenHeight);
+        graphics.fillRect(0, 0, frameWidth, frameHeight);
 
         /* #Teleboubizes */
         if (Evolutioner.debug) {
@@ -118,9 +124,11 @@ public class SimulationPanel extends JPanel {
 
         Insets insets = Evolutioner.frame.getInsets();
 
-        screenWidth = worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
-        screenHeight = Evolutioner.frame.getHeight() - insets.top - insets.bottom;
-        worldHeight = screenHeight - dirtHeight - grassHeight;
+        frameWidth = worldWidth = Evolutioner.frame.getWidth() - insets.left - insets.right;
+        frameHeight = Evolutioner.frame.getHeight() - insets.top - insets.bottom;
+        worldHeight = frameHeight - dirtHeight - grassHeight;
+
+        System.out.println("f" + Evolutioner.frame.getWidth() + ":" + Evolutioner.frame.getHeight());
 
     }
 
@@ -145,7 +153,7 @@ public class SimulationPanel extends JPanel {
 
     public static void setCameraY(int cameraY) {
 
-        if (cameraY >= 0 && cameraY + screenHeight * cameraScale <= screenHeight) SimulationPanel.cameraY = cameraY;
+        SimulationPanel.cameraY = cameraY < 0 ? 0 : cameraY + frameHeight * cameraScale > frameHeight ? frameHeight : cameraY;
 
     }
 
@@ -157,13 +165,13 @@ public class SimulationPanel extends JPanel {
 
     public static void setCameraScale(float scale){
 
-        cameraScale = scale >= 0 ? scale <= 1 ? scale : 1 : 0;
+        cameraScale = scale < 0 ? 0 : scale > 1 ? 1 : scale;
 
     }
 
     public static boolean isOnScreen(int x, int y){
 
-        return x >= cameraX && x <= x + screenWidth * cameraScale && y >= cameraY && y <= y + screenHeight * cameraScale;
+        return x >= cameraX && x <= x + frameWidth * cameraScale && y >= cameraY && y <= y + frameHeight * cameraScale;
 
     }
 }

@@ -1,13 +1,8 @@
 package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.graphic.SimulationPanel;
-import fr.paragoumba.evolutioner.Unit;
-import org.omg.CORBA.PUBLIC_MEMBER;
 
 import java.awt.*;
-
-import static fr.paragoumba.evolutioner.Unit.METER;
-import static fr.paragoumba.evolutioner.Unit.PIXEL;
 
 public class Sign extends Entity {
 
