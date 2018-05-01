@@ -169,7 +169,7 @@ public class SimulationPanel extends JPanel {
 
     }
 
-    public static boolean isOnScreen(int x, int y){
+    public static boolean isOnScreen(double x, double y){
 
         return x >= cameraX && x <= x + frameWidth * cameraScale && y >= cameraY && y <= y + frameHeight * cameraScale;
 

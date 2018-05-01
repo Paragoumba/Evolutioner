@@ -8,10 +8,11 @@ public class Creature extends Entity implements Runnable {
 
         nodes = new Node[nodeNumber];
         muscles = new Muscle[nodeNumber];
+        musclesTimes = new double[nodeNumber];
 
         for (int i = 0; i < nodeNumber; ++i){
 
-            nodes[i] = i == 0 ? new Node() : new Node(index, i - 1, muscles[i - 1].extendedLength);
+            nodes[i] = i == 0 ? new Node(index, i) : new Node(index, i, nodes[i - 1].getX(), nodes[i - 1].getY(), muscles[i - 1].extendedLength);
             muscles[i] = i == nodeNumber - 1 ? new Muscle(index, i, 0) : new Muscle(index, i, i + 1);
 
         }
@@ -20,6 +21,7 @@ public class Creature extends Entity implements Runnable {
     public boolean living = false;
     final Node[] nodes;
     final Muscle[] muscles;
+    private final double[] musclesTimes;
     private final Thread creatureThread = new Thread(this);
 
     public void live(){
@@ -32,15 +34,13 @@ public class Creature extends Entity implements Runnable {
     public void run() {
 
         living = true;
-        long targetTime = 17; //3ms = 333fps; 200ms = 5fps; 17ms = ~60fps
 
         while (living) {
 
             //Apply velocity to each Node
             for (Node node : nodes) {
 
-                node.x += node.velocityX;
-                node.y += node.velocityY;
+                node.move(node.velocityX, node.velocityY);
 
                 //Set velocity to 0 if ground is touched (gravity)
                 if (node.isOnGround()) node.velocityY = 0;
@@ -64,34 +64,36 @@ public class Creature extends Entity implements Runnable {
 
                     while (System.currentTimeMillis() - start < (muscle.isContracting ? muscle.contractedTime : muscle.extendedTime)){
 
-                        double cos = addedLength * Math.cos(muscle.getOrientedAngle());
-                        double sin = addedLength * Math.sin(muscle.getOrientedAngle());
+                        double angle = muscle.getOrientedAngle();
 
-                        if (previousNode.x < nextNode.x){
+                        System.out.println("alpha" + angle);
 
-                            previousNode.x += cos;
-                            nextNode.x -= cos;
+                        double cos = addedLength * Math.cos(angle);
+                        double sin = addedLength * Math.sin(angle);
 
-                        } else {
+                        if (previousNode.getX() < nextNode.getX()) {
 
-                            previousNode.x -= cos;
-                            nextNode.x += cos;
-
-                        }
-
-                        if (previousNode.y < nextNode.y){
-
-                            previousNode.y += sin;
-                            nextNode.y -= sin;
+                            previousNode.move(cos, 0);
+                            nextNode.move(-cos, 0);
 
                         } else {
 
-                            previousNode.y -= sin;
-                            nextNode.y += sin;
+                            previousNode.move(-cos, 0);
+                            nextNode.move(cos, 0);
 
                         }
 
-                        Thread.sleep(1);
+                        if (previousNode.getY() < nextNode.getY()) {
+
+                            previousNode.move(0, sin);
+                            nextNode.move(0, -sin);
+
+                        } else {
+
+                            previousNode.move(0, -sin);
+                            nextNode.move(0, sin);
+
+                        }
 
                     }
 
@@ -99,7 +101,7 @@ public class Creature extends Entity implements Runnable {
 
                 }
 
-                Thread.sleep(targetTime);
+                Thread.sleep(1);
 
             } catch (InterruptedException e) {
 
@@ -130,7 +132,7 @@ public class Creature extends Entity implements Runnable {
 
         for (Node node : nodes){
 
-            x += node.x;
+            x += node.getX();
             ++i;
 
         }
@@ -146,7 +148,7 @@ public class Creature extends Entity implements Runnable {
 
         for (Node node : nodes){
 
-            y += node.y;
+            y += node.getY();
             ++i;
 
         }

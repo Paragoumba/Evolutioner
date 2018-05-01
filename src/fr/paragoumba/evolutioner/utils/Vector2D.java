@@ -2,15 +2,15 @@ package fr.paragoumba.evolutioner.utils;
 
 public class Vector2D {
 
-    public Vector2D(int x, int y){
+    public Vector2D(double x, double y){
 
         this.x = x;
         this.y = y;
 
     }
 
-    public int x;
-    public int y;
+    private double x;
+    private double y;
 
     public double getLength(){
 
