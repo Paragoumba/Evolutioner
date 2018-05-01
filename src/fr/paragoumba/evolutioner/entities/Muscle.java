@@ -1,7 +1,7 @@
 package fr.paragoumba.evolutioner.entities;
 
 import fr.paragoumba.evolutioner.Farm;
-import fr.paragoumba.evolutioner.Utils.Vector2D;
+import fr.paragoumba.evolutioner.utils.Vector2D;
 import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 
 import java.awt.*;

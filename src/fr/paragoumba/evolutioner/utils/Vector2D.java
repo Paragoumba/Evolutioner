@@ -1,4 +1,4 @@
-package fr.paragoumba.evolutioner.Utils;
+package fr.paragoumba.evolutioner.utils;
 
 public class Vector2D {
 

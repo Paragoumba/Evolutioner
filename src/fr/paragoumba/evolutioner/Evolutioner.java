@@ -1,6 +1,6 @@
 package fr.paragoumba.evolutioner;
 
-import fr.paragoumba.evolutioner.Utils.DocumentFilter;
+import fr.paragoumba.evolutioner.utils.DocumentFilter;
 import fr.paragoumba.evolutioner.graphic.*;
 import org.yaml.snakeyaml.Yaml;
 
