@@ -4,11 +4,16 @@ import fr.paragoumba.evolutioner.graphic.SimulationPanel;
 import fr.paragoumba.evolutioner.entities.Creature;
 
 import java.awt.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Comparator;
+import java.util.List;
 
 public class Farm implements Runnable {
 
     private Farm(){}
 
+    public static final int NODE_NUMBER = 3;
     public static int baseWidth;
     public static int baseHeight;
     private static Creature[] creatures = new Creature[0];
@@ -45,7 +50,7 @@ public class Farm implements Runnable {
 
         creatures = new Creature[creatureNumber];
 
-        for (int i = 0; i < creatureNumber; ++i) creatures[i] = new Creature(i, 3);
+        for (int i = 0; i < creatureNumber; ++i) creatures[i] = new Creature(i, NODE_NUMBER);
 
     }
 
@@ -129,5 +134,17 @@ public class Farm implements Runnable {
             creatures[i].die();
 
         }
+
+        List<Creature> creaturesList = Arrays.asList(creatures);
+        creaturesList.sort(Comparator.comparingInt(Creature::getAverageX));
+
+        for (int i = 0; i < creaturesList.size(); i++ ){
+            creaturesList.get(i).die();
+            creaturesList.add(i, new Creature(i, NODE_NUMBER));
+
+        }
+
+        creatures = (Creature[]) creaturesList.toArray();
+
     }
 }
